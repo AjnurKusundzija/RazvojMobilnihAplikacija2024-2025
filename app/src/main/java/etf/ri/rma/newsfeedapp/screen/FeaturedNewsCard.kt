@@ -2,7 +2,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -12,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -21,17 +21,22 @@ import etf.ri.rma.newsfeedapp.R
 
 @Composable
 fun FeaturedNewsCard(
-    title : String,
-    snippet : String,
-    imageUrl : String?,
-    source : String,
-    publishedDate : String
+    title: String,
+    snippet: String,
+    imageUrl: String?,
+    source: String,
+    publishedDate: String
 ) {
+    val cardModifier = Modifier
+        .fillMaxWidth()
+        .padding(3.5.dp)
+
+    val imageModifier = Modifier.fillMaxWidth()
+
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(3.5.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
+        modifier = cardModifier,
+        elevation = CardDefaults.cardElevation(10.dp),
+
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
@@ -41,22 +46,20 @@ fun FeaturedNewsCard(
                 painter = painterResource(id = R.drawable.news),
                 contentDescription = "Featured News Image",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-
+                modifier = imageModifier
             )
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = Bold,
                 maxLines = 2,
-                overflow = TextOverflow.Clip
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = snippet,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 3,
-                overflow = TextOverflow.Clip
+                overflow = TextOverflow.Ellipsis
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -81,4 +84,3 @@ fun FeaturedNewsCard(
         }
     }
 }
-

@@ -50,11 +50,12 @@ fun FilterChipComponent(
     )
 }
 
+// Kotlin
 @Composable
 fun NewsFeedScreen() {
     val newsItems by remember { mutableStateOf(NewsData.getAllNews()) }
     var filteredNews by remember { mutableStateOf(newsItems) }
-    var selectedCategory by remember { mutableStateOf("All") }
+    var selectedCategory by remember { mutableStateOf("Sve") }
 
     fun changeCategory(newCategory: String) {
         selectedCategory = newCategory
@@ -70,8 +71,8 @@ fun NewsFeedScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 5.dp),
-            horizontalArrangement = Arrangement.spacedBy(2.5.dp)
+                .padding(horizontal = 8.dp, vertical = 0.dp), // Reduced vertical padding
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             FilterChipComponent(
                 assignedCategory = "Politika",
@@ -92,21 +93,19 @@ fun NewsFeedScreen() {
                 tag = "filter_chip_sci"
             )
             FilterChipComponent(
-                assignedCategory = "All",
+                assignedCategory = "Sve",
                 selectedCategory = selectedCategory,
                 onClick = { category -> changeCategory(category) },
                 tag = "filter_chip_all"
             )
         }
-        Spacer(modifier = Modifier.height(2.dp))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 5.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(horizontal = 8.dp, vertical = 0.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-
             FilterChipComponent(
                 assignedCategory = "Zdravlje",
                 selectedCategory = selectedCategory,
@@ -114,8 +113,8 @@ fun NewsFeedScreen() {
                 tag = "filter_chip_zdravlje"
             )
         }
-        if (filteredNews.isNotEmpty()) {
 
+        if (filteredNews.isNotEmpty()) {
             NewsList(filteredNews)
         } else {
             MessageCard(selectedCategory)
