@@ -30,12 +30,11 @@ fun FeaturedNewsCard(
     val cardModifier = Modifier
         .fillMaxWidth()
         .padding(3.5.dp)
-
     val imageModifier = Modifier.fillMaxWidth()
-
     Card(
         modifier = cardModifier,
-        elevation = CardDefaults.cardElevation(10.dp),
+        shape= MaterialTheme.shapes.large,
+        elevation = CardDefaults.cardElevation(5.dp)
 
     ) {
         Column(

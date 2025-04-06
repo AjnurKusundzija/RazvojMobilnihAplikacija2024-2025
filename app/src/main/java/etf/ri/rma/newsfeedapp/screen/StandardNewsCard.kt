@@ -35,7 +35,8 @@ fun StandardNewsCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(3.5.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(5.dp)
     ) {
         Row(
             modifier = Modifier.padding(8.dp),
@@ -46,13 +47,11 @@ fun StandardNewsCard(
                 contentDescription = "News Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(96.dp)
+                    .width(97.dp)
                     .height(105.dp)
-
             )
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
                 Text(
                     text = title,

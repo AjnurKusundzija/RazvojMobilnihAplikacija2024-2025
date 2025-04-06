@@ -1,4 +1,5 @@
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -50,12 +52,11 @@ fun FilterChipComponent(
     )
 }
 
-// Kotlin
 @Composable
 fun NewsFeedScreen() {
     val newsItems by remember { mutableStateOf(NewsData.getAllNews()) }
     var filteredNews by remember { mutableStateOf(newsItems) }
-    var selectedCategory by remember { mutableStateOf("Sve") }
+    var selectedCategory by remember { mutableStateOf("All") }
 
     fun changeCategory(newCategory: String) {
         selectedCategory = newCategory
@@ -71,31 +72,31 @@ fun NewsFeedScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 0.dp), // Reduced vertical padding
+                .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             FilterChipComponent(
                 assignedCategory = "Politika",
                 selectedCategory = selectedCategory,
-                onClick = { category -> changeCategory(category) },
+                onClick = { changeCategory(it) },
                 tag = "filter_chip_pol"
             )
             FilterChipComponent(
                 assignedCategory = "Sport",
                 selectedCategory = selectedCategory,
-                onClick = { category -> changeCategory(category) },
+                onClick = { changeCategory(it) },
                 tag = "filter_chip_spo"
             )
             FilterChipComponent(
                 assignedCategory = "Nauka/Tehnologija",
                 selectedCategory = selectedCategory,
-                onClick = { category -> changeCategory(category) },
+                onClick = { changeCategory(it) },
                 tag = "filter_chip_sci"
             )
             FilterChipComponent(
-                assignedCategory = "Sve",
+                assignedCategory = "All",
                 selectedCategory = selectedCategory,
-                onClick = { category -> changeCategory(category) },
+                onClick = { changeCategory(it) },
                 tag = "filter_chip_all"
             )
         }
@@ -103,21 +104,28 @@ fun NewsFeedScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 0.dp),
+                .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             FilterChipComponent(
                 assignedCategory = "Zdravlje",
                 selectedCategory = selectedCategory,
-                onClick = { category -> changeCategory(category) },
+                onClick = { changeCategory(it) },
                 tag = "filter_chip_zdravlje"
             )
         }
 
-        if (filteredNews.isNotEmpty()) {
-            NewsList(filteredNews)
-        } else {
-            MessageCard(selectedCategory)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            contentAlignment = Alignment.Center
+        ) {
+            if (filteredNews.isNotEmpty()) {
+                NewsList(filteredNews)
+            } else {
+                MessageCard(selectedCategory)
+            }
         }
     }
 }

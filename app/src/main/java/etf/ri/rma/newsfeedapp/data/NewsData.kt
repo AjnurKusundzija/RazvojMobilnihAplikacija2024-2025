@@ -42,7 +42,7 @@ object NewsData {
             imageUrl = "",
             category = "Politika",
             isFeatured = false,
-            source = "Svjetske vijesti",
+            source = "Avaz vijesti",
             publishedDate = "04. 04. 2025."
         ),
         NewsItem(
@@ -82,7 +82,7 @@ object NewsData {
             imageUrl = "",
             category = "Nauka/Tehnologija",
             isFeatured = false,
-            source = "Space Report",
+            source = "SpaceNovosti",
             publishedDate = "27. 11. 2023."
         ),
 
@@ -93,7 +93,7 @@ object NewsData {
             imageUrl = "",
             category = "Nauka/Tehnologija",
             isFeatured = false,
-            source = "Google Newsroom",
+            source = "GoogleTV",
             publishedDate = "29. 10. 2014."
         ),
         NewsItem(
@@ -101,7 +101,7 @@ object NewsData {
             title = "3D štampane kuće sve popularnije",
             snippet = "Tehnologija 3D štampe transformiše građevinsku industriju, smanjujući troškove i vrijeme izgradnje.",
             imageUrl = "",
-            category = "NauKa/Tehnologija",
+            category = "Nauka/Tehnologija",
             isFeatured = false,
             source = "Arhitektonski magazin",
             publishedDate = "30. 10. 2023."
@@ -109,7 +109,7 @@ object NewsData {
         NewsItem(
             id = "12",
             title = "Razvijen prvi bionički prst s osjećajem dodira",
-            snippet = "Inženjeri stvorili bionički prst koji korisnicima vraća osjećaj dodira.",
+            snippet = "Inženjeri stvorili inovaciju koja korisnicima vraća osjećaj dodira.",
             imageUrl = "",
             category = "Nauka/Tehnologija",
             isFeatured = false,
@@ -138,22 +138,22 @@ object NewsData {
         ),
         NewsItem(
             id = "15",
-            title = "Pametni gradovi postaju stvarnost",
-            snippet = "Pilot projekti u Evropi pokazuju kako tehnologija poboljšava urbani život.",
+            title = "Bakir Izetbegović najavio nove mjere za poboljšanje kvaliteta života",
+            snippet = "Glasajte za mene i dobijate sve!",
             imageUrl = "",
-            category = "",
+            category = "Politika",
             isFeatured = false,
-            source = "Smart City Hub",
+            source = "SDACommunity",
             publishedDate = "3. 11. 2023."
         ),
         NewsItem(
             id = "16",
-            title = "Zvijezda sporta ruši rekord",
+            title = "Zvijezda F1 ruši rekord",
             snippet = "Poznati sportaš postavio je novi rekord impresivnim nastupom.",
             imageUrl = "",
             category = "Sport",
             isFeatured = false,
-            source = "Globalne Sportske Vijesti",
+            source = "GlobalneVijesti",
             publishedDate = "21. 11. 2024."
         ),
         NewsItem(
