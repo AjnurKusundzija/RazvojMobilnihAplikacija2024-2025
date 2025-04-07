@@ -1,4 +1,5 @@
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,15 +28,21 @@ fun FeaturedNewsCard(
     source: String,
     publishedDate: String
 ) {
-    val cardModifier = Modifier
-        .fillMaxWidth()
-        .padding(3.5.dp)
-    val imageModifier = Modifier.fillMaxWidth()
-    Card(
-        modifier = cardModifier,
-        shape= MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(5.dp)
+    val bojakartice = if (isSystemInDarkTheme()) {
 
+        Color(0xFF534B4B)
+    } else {
+
+        Color(0xFF798DDC)
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(3.5.dp),
+        shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.cardElevation(5.dp),
+        colors = CardDefaults.cardColors(containerColor = bojakartice)
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
@@ -45,7 +52,7 @@ fun FeaturedNewsCard(
                 painter = painterResource(id = R.drawable.news),
                 contentDescription = "Featured News Image",
                 contentScale = ContentScale.Crop,
-                modifier = imageModifier
+                modifier = Modifier.fillMaxWidth()
             )
             Text(
                 text = title,
@@ -71,7 +78,7 @@ fun FeaturedNewsCard(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = " • ",
+                    text = " ● ",
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(

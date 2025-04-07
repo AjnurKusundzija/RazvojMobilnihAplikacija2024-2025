@@ -1,6 +1,7 @@
 package etf.ri.rma.newsfeedapp.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,9 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import etf.ri.rma.newsfeedapp.R
 
@@ -31,12 +34,27 @@ fun StandardNewsCard(
     source: String,
     publishedDate: String
 ) {
+    val bojasource = if (isSystemInDarkTheme()) {
+        Color(0xFFFFFFFF)
+    } else {
+        Color(0xFF798DDC)
+    }
+    val bojakartice = if (isSystemInDarkTheme()) {
+
+        Color(0xFF534B4B)
+    } else {
+
+        Color(0xFF798DDC)
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(3.5.dp),
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(5.dp)
+        elevation = CardDefaults.cardElevation(5.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = bojakartice
+        )
     ) {
         Row(
             modifier = Modifier.padding(8.dp),
@@ -63,7 +81,8 @@ fun StandardNewsCard(
                     text = snippet,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 3,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -76,7 +95,7 @@ fun StandardNewsCard(
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = " • ",
+                        text = " ● ",
                     )
                     Text(
                         text = publishedDate,
