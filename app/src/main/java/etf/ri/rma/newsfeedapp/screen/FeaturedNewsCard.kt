@@ -49,7 +49,7 @@ fun FeaturedNewsCard(
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.news),
+                painter = painterResource(id = R.drawable.vijesti),
                 contentDescription = "Featured News Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth()

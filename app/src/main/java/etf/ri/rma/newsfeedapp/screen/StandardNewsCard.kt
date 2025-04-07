@@ -34,11 +34,7 @@ fun StandardNewsCard(
     source: String,
     publishedDate: String
 ) {
-    val bojasource = if (isSystemInDarkTheme()) {
-        Color(0xFFFFFFFF)
-    } else {
-        Color(0xFF798DDC)
-    }
+
     val bojakartice = if (isSystemInDarkTheme()) {
 
         Color(0xFF534B4B)
@@ -61,9 +57,9 @@ fun StandardNewsCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.news),
+                painter = painterResource(id = R.drawable.vijesti),
                 contentDescription = "News Image",
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .width(97.dp)
                     .height(105.dp)
