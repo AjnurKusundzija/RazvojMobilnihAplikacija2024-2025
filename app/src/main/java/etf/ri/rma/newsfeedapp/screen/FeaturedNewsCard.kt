@@ -75,7 +75,7 @@ fun FeaturedNewsCard(
                 Text(
                     text = source,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
+
                 )
                 Text(
                     text = " ● ",
@@ -84,7 +84,7 @@ fun FeaturedNewsCard(
                 Text(
                     text = publishedDate,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.secondary
+
                 )
             }
         }
