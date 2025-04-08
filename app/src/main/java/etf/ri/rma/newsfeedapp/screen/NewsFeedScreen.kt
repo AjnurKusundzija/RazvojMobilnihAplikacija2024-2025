@@ -116,7 +116,7 @@ fun NewsFeedScreen() {
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 FilterChipComponent(
-                    assignedCategory = "All",
+                    assignedCategory = "Sve",
                     selectedCategory = selectedCategory,
                     onClick = { changeCategory(it) },
                     tag = "filter_chip_all",
