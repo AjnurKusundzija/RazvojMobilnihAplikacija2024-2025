@@ -70,7 +70,8 @@ fun StandardNewsCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
-                    maxLines = 2
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
@@ -96,6 +97,7 @@ fun StandardNewsCard(
                     Text(
                         text = publishedDate,
                         style = MaterialTheme.typography.bodySmall,
+
                     )
                 }
             }

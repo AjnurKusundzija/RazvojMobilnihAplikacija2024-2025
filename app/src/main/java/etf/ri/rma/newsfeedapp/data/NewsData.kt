@@ -6,14 +6,16 @@ import etf.ri.rma.newsfeedapp.model.NewsItem
 object NewsData {
     val newsItems = listOf(
         NewsItem(
+
             id = "0",
-            title = "Problem Trumpovih carina!\nDodajemo nove carine!",
-            snippet = "Donald Trump, predsjednik SAD-a, donio je odluku o nametanju carina.",
+            title = "Ramo Isak spreman za hapšenje Dodika",
+            snippet = "Ramo Isak, ministar unutrašnjih poslova, najavio je akciju hapšenja sa svojim sinovima.",
             imageUrl = "",
             category = "Politika",
             isFeatured = true,
-            source = "Sigurno se desilo",
-            publishedDate = "27. 2. 2025."
+            source = "RamoIsak",
+            publishedDate = "10. 04. 2025."
+
         ),
         NewsItem(
             id = "1",
@@ -57,7 +59,7 @@ object NewsData {
         ),
         NewsItem(
             id = "6",
-            title = "NASA planira povratak na Mjesec 2025.",
+            title = "NASA se vraća na Mjesec",
             snippet = "NASA je najavila novu misiju s ljudskom posadom koja će sletjeti na Mjesec nakon više od 50 godina.",
             imageUrl = "",
             category = "Nauka/Tehnologija",
@@ -72,18 +74,28 @@ object NewsData {
             imageUrl = "",
             category = "Nauka/Tehnologija",
             isFeatured = true,
-            source = "TechAsia",
+            source = "Ne pržim ćevape community",
             publishedDate = "26. 10. 2023."
         ),
         NewsItem(
             id = "8",
-            title = "Otkriven najdublji okean na egzoplaneti",
-            snippet = "Astronomi su pronašli egzoplanetu sa oceanom dubljim od bilo kojeg na Zemlji.",
+            title = "Otkriven novi hemijski element za izradu superbaterija",
+            snippet = "Od sada nećemo ni puniti telefone!",
             imageUrl = "",
             category = "Nauka/Tehnologija",
             isFeatured = false,
-            source = "SpaceNovosti",
+            source = "Iskopaj.ba",
             publishedDate = "27. 11. 2023."
+        ),
+        NewsItem(
+            id = "9",
+            title = "Problem Trumpovih carina!\nDodane nove carine!",
+            snippet = "Donald Trump, predsjednik SAD-a, donio je odluku o nametanju carina.",
+            imageUrl = "",
+            category = "Politika",
+            isFeatured = true,
+            source = "Sigurno se desilo",
+            publishedDate = "27. 2. 2025."
         ),
 
         NewsItem(
@@ -99,7 +111,7 @@ object NewsData {
         NewsItem(
             id = "11",
             title = "3D štampane kuće sve popularnije",
-            snippet = "Tehnologija 3D štampe transformiše građevinsku industriju, smanjujući troškove i vrijeme izgradnje.",
+            snippet = "Tehnologija 3D štampe transformiše građevinsku industriju, ali kuće nisu otporne na zemljotres.",
             imageUrl = "",
             category = "Nauka/Tehnologija",
             isFeatured = false,
@@ -128,13 +140,13 @@ object NewsData {
         ),
         NewsItem(
             id = "14",
-            title = "Nova baterija traje 10 puta duže",
-            snippet = "Istraživači otkrili materijal koji značajno produžava vijek baterija.",
+            title = "Ramo Isak spreman za hapšenje Dodika",
+            snippet = "Ramo Isak, ministar unutrašnjih poslova, najavio je akciju hapšenja sa svojim sinovima.",
             imageUrl = "",
-            category = "Nauka/Tehnologija",
-            isFeatured = false,
-            source = "Energy Science",
-            publishedDate = "2. 11. 2018."
+            category = "Politika",
+            isFeatured = true,
+            source = "RamoIsak",
+            publishedDate = "10. 04. 2025."
         ),
         NewsItem(
             id = "15",
