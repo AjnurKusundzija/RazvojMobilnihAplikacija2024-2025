@@ -1,6 +1,8 @@
+
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -107,6 +109,7 @@ fun NewsFeedScreen() {
         ) {
             Spacer(modifier = Modifier.padding(vertical = 6.dp))
 
+
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -117,8 +120,7 @@ fun NewsFeedScreen() {
                     ChipData("Sve", "filter_chip_all", "Sve"),
                     ChipData("Politika", "filter_chip_pol", "Politika"),
                     ChipData("Sport", "filter_chip_spo", "Sport"),
-                    ChipData("Nauka/Tehnologija", "filter_chip_sci", "Nauka/Tehnologija"),
-                    ChipData("Zdravlje", "filter_chip_zdravlje", "Zdravlje")
+                    ChipData("Nauka/Tehnologija", "filter_chip_sci", "Nauka/Tehnologija")
                 )
                 items(filteri) { chip ->
                     FilterChipComponent(
@@ -130,6 +132,24 @@ fun NewsFeedScreen() {
                     )
                 }
             }
+
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                val chipZdravlje = ChipData("Zdravlje", "filter_chip_zdravlje", "Zdravlje")
+                FilterChipComponent(
+                    assignedCategory = chipZdravlje.kategorija,
+                    selectedCategory = selectedCategory,
+                    onClick = { changeCategory(it) },
+                    testTag = chipZdravlje.tag,
+                    colors = chip_boja
+                )
+            }
+
             if (filteredNews.isNotEmpty()) {
                 NewsList(filteredNews)
             } else {
