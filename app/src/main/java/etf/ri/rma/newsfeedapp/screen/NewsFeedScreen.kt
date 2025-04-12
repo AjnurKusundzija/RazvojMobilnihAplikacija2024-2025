@@ -140,7 +140,7 @@ fun NewsFeedScreen() {
                     .padding(horizontal = 8.dp, vertical = 6.dp),
                 horizontalArrangement = Arrangement.Start
             ) {
-                val chipZdravlje = ChipData("Zdravlje", "filter_chip_zdravlje", "Zdravlje")
+                val chipZdravlje = ChipData("Zdravlje", "filter_chip_none", "Zdravlje")
                 FilterChipComponent(
                     assignedCategory = chipZdravlje.kategorija,
                     selectedCategory = selectedCategory,
