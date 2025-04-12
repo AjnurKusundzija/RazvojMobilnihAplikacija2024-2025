@@ -197,7 +197,18 @@ object NewsData {
             isFeatured = true,
             source = "Bit ce ako Bog da",
             publishedDate = "24. 11. 2023."
+        ),
+        NewsItem(
+            id = "20",
+            title = "Real Madrid osvojio Ligu prvaka",
+            snippet = "Royalni klub ponovo na vrhu Evrope.",
+            imageUrl = "",
+            category = "Sport",
+            isFeatured = true,
+            source = "Bit ce ako Bog da",
+            publishedDate = "24. 11. 2023."
         )
+
 
     )
     fun getAllNews(): List<NewsItem> {

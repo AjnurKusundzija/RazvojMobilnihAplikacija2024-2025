@@ -23,7 +23,8 @@ fun MessageCard(
             modifier = Modifier.padding(10.dp),
             text = "Nema pronađenih vijesti u kategoriji $category",
             style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

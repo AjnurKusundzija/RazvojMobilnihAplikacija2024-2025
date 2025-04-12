@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,25 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import etf.ri.rma.newsfeedapp.R
+import etf.ri.rma.newsfeedapp.model.NewsItem
 
 @Composable
-fun StandardNewsCard(
-    title: String,
-    snippet: String,
-    imageUrl: String?,
-    source: String,
-    publishedDate: String
-) {
-
+fun StandardNewsCard(newsItem: NewsItem) {
     val bojakartice = if (isSystemInDarkTheme()) {
-
         Color(0xFF534B4B)
     } else {
-
         Color(0xFF798DDC)
     }
     Card(
@@ -48,9 +38,7 @@ fun StandardNewsCard(
             .padding(3.5.dp),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(5.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = bojakartice
-        )
+        colors = CardDefaults.cardColors(containerColor = bojakartice)
     ) {
         Row(
             modifier = Modifier.padding(8.dp),
@@ -65,21 +53,24 @@ fun StandardNewsCard(
                     .height(105.dp)
             )
             Column(
-                modifier = Modifier.fillMaxWidth().weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
                 Text(
-                    text = title,
+                    text = newsItem.title,
                     style = MaterialTheme.typography.titleSmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = snippet,
+                    text = newsItem.snippet,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
-
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -87,17 +78,18 @@ fun StandardNewsCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = source,
+                        text = newsItem.source,
                         style = MaterialTheme.typography.bodySmall,
-
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = " ● ",
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = publishedDate,
+                        text = newsItem.publishedDate,
                         style = MaterialTheme.typography.bodySmall,
-
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

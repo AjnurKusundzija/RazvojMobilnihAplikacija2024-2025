@@ -1,7 +1,5 @@
 package etf.ri.rma.newsfeedapp.screen
 
-
-import FeaturedNewsCard
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -11,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-
 
 @Composable
 fun NewsList(newsList: List<NewsItem>) {
@@ -30,23 +27,12 @@ fun NewsList(newsList: List<NewsItem>) {
     }
 }
 
-
 @Composable
 fun NewsCard(news: NewsItem) {
-    when (!news.isFeatured) {
-        true -> StandardNewsCard(
-            title = news.title,
-            snippet = news.snippet,
-            imageUrl = news.imageUrl,
-            source = news.source,
-            publishedDate = news.publishedDate
-        )
-        false -> FeaturedNewsCard(
-            title = news.title,
-            snippet = news.snippet,
-            imageUrl = news.imageUrl,
-            source = news.source,
-            publishedDate = news.publishedDate
-        )
+    if (!news.isFeatured) {
+        StandardNewsCard(news)
+
+    } else {
+        FeaturedNewsCard(news)
     }
 }

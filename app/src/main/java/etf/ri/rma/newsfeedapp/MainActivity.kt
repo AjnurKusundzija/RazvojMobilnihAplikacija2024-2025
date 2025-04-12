@@ -1,6 +1,6 @@
 package etf.ri.rma.newsfeedapp
 
-import NewsFeedScreen
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import etf.ri.rma.newsfeedapp.screen.NewsFeedScreen
 import etf.ri.rma.newsfeedapp.ui.theme.NewsFeedAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,10 +21,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NewsFeedAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues->
                     NewsFeedScreen()
                 }
             }
         }
     }
-}
+

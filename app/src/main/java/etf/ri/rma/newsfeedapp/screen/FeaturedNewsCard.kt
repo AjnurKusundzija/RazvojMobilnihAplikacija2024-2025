@@ -1,3 +1,6 @@
+
+package etf.ri.rma.newsfeedapp.screen
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -20,20 +23,13 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import etf.ri.rma.newsfeedapp.R
+import etf.ri.rma.newsfeedapp.model.NewsItem
 
 @Composable
-fun FeaturedNewsCard(
-    title: String,
-    snippet: String,
-    imageUrl: String?,
-    source: String,
-    publishedDate: String
-) {
+fun FeaturedNewsCard(news: NewsItem) {
     val bojakartice = if (isSystemInDarkTheme()) {
-
         Color(0xFF534B4B)
     } else {
-
         Color(0xFF798DDC)
     }
 
@@ -50,23 +46,25 @@ fun FeaturedNewsCard(
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.vijesti),//dodana slika iz drawable
-                contentDescription = "Featured News Image",
+                painter = painterResource(id = R.drawable.vijesti),
+                contentDescription = "image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth()
             )
             Text(
-                text = title,
+                text = news.title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = Bold,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = snippet,
+                text = news.snippet,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.padding(vertical = 2.dp))
             Row(
@@ -75,18 +73,19 @@ fun FeaturedNewsCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = source,
+                    text = news.source,
                     style = MaterialTheme.typography.bodySmall,
-
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = " ● ",
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = publishedDate,
+                    text = news.publishedDate,
                     style = MaterialTheme.typography.bodySmall,
-
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
