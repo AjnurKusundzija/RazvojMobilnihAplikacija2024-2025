@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 @Composable
 fun NewsList(newsList: List<NewsItem>) {
     LazyColumn(
-        contentPadding = PaddingValues(horizontal = 5.dp, vertical = 6.dp),
+        contentPadding = PaddingValues(horizontal = 2.dp, vertical = 6.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
         modifier = Modifier
             .fillMaxSize()

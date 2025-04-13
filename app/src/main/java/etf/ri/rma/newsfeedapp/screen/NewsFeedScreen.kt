@@ -117,7 +117,7 @@ fun NewsFeedScreen() {
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                    .padding(horizontal = 8.dp, vertical = 3.5.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 val filteri = listOf(
@@ -141,7 +141,7 @@ fun NewsFeedScreen() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                    .padding(horizontal = 8.dp, vertical = 3.5.dp),
                 horizontalArrangement = Arrangement.Start
             ) {
                 val chipZdravlje = ChipData("Zdravlje", "filter_chip_none", "Zdravlje")

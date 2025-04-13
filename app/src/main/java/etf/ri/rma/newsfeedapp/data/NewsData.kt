@@ -14,7 +14,7 @@ object NewsData {
             category = "Politika",
             isFeatured = true,
             source = "RamoIsak",
-            publishedDate = "10. 04. 2025."
+            publishedDate = "01. 04. 2025."
 
         ),
         NewsItem(
@@ -25,7 +25,7 @@ object NewsData {
             category = "Sport",
             isFeatured = false,
             source = "Sportske novosti",
-            publishedDate = "14. 10. 2024."
+            publishedDate = "02. 04. 2025."
         ),
         NewsItem(
             id = "2",
@@ -35,7 +35,7 @@ object NewsData {
             category = "Nauka/Tehnologija",
             isFeatured = true,
             source = "Tehnološke vijesti",
-            publishedDate = "24. 10. 2022."
+            publishedDate = "03. 04. 2025."
         ),
         NewsItem(
             id = "3",
@@ -55,7 +55,7 @@ object NewsData {
             category = "Nauka/Tehnologija",
             isFeatured = false,
             source = "TechMed",
-            publishedDate = "24. 10. 2024."
+            publishedDate = "05. 04. 2025."
         ),
         NewsItem(
             id = "6",
@@ -65,7 +65,7 @@ object NewsData {
             category = "Nauka/Tehnologija",
             isFeatured = false,
             source = "NASA Today",
-            publishedDate = "25. 10. 2024."
+            publishedDate = "06. 04. 2015."
         ),
         NewsItem(
             id = "7",
@@ -75,7 +75,7 @@ object NewsData {
             category = "Nauka/Tehnologija",
             isFeatured = true,
             source = "Ne pržim ćevape community",
-            publishedDate = "26. 10. 2023."
+            publishedDate = "07. 04. 2012."
         ),
         NewsItem(
             id = "8",
@@ -85,7 +85,7 @@ object NewsData {
             category = "Nauka/Tehnologija",
             isFeatured = false,
             source = "Iskopaj.ba",
-            publishedDate = "27. 11. 2023."
+            publishedDate = "08. 04. 2020."
         ),
         NewsItem(
             id = "9",
@@ -95,7 +95,7 @@ object NewsData {
             category = "Politika",
             isFeatured = true,
             source = "Sigurno se desilo",
-            publishedDate = "27. 2. 2025."
+            publishedDate = "09. 04. 2013."
         ),
 
         NewsItem(
@@ -106,7 +106,7 @@ object NewsData {
             category = "Nauka/Tehnologija",
             isFeatured = false,
             source = "GoogleTV",
-            publishedDate = "29. 10. 2014."
+            publishedDate = "10. 04. 2014."
         ),
         NewsItem(
             id = "11",
@@ -116,7 +116,7 @@ object NewsData {
             category = "Nauka/Tehnologija",
             isFeatured = false,
             source = "Arhitektonski magazin",
-            publishedDate = "30. 10. 2023."
+            publishedDate = "11. 04. 2019."
         ),
         NewsItem(
             id = "12",
@@ -126,7 +126,7 @@ object NewsData {
             category = "Nauka/Tehnologija",
             isFeatured = false,
             source = "SabitNews",
-            publishedDate = "31. 10. 2016."
+            publishedDate = "12. 04. 2018."
         ),
         NewsItem(
             id = "13",
@@ -136,7 +136,7 @@ object NewsData {
             category = "Politika",
             isFeatured = true,
             source = "RašidaCommunity",
-            publishedDate = "1. 11. 2023."
+            publishedDate = "13. 04. 2017."
         ),
         NewsItem(
             id = "14",
@@ -146,7 +146,7 @@ object NewsData {
             category = "Politika",
             isFeatured = true,
             source = "RamoIsak",
-            publishedDate = "10. 04. 2025."
+            publishedDate = "14. 04. 2016."
         ),
         NewsItem(
             id = "15",
@@ -156,7 +156,7 @@ object NewsData {
             category = "Politika",
             isFeatured = false,
             source = "SDACommunity",
-            publishedDate = "3. 11. 2023."
+            publishedDate = "15. 04. 2015."
         ),
         NewsItem(
             id = "16",
@@ -166,7 +166,7 @@ object NewsData {
             category = "Sport",
             isFeatured = false,
             source = "GlobalneVijesti",
-            publishedDate = "21. 11. 2024."
+            publishedDate = "16. 04. 2021."
         ),
         NewsItem(
             id = "17",
@@ -176,7 +176,7 @@ object NewsData {
             category = "Sport",
             isFeatured = true,
             source = "Klix.ba",
-            publishedDate = "22. 11. 2019."
+            publishedDate = "17. 04. 2019."
         ),
         NewsItem(
             id = "18",
@@ -186,7 +186,7 @@ object NewsData {
             category = "Politika",
             isFeatured = true,
             source = "Nikad se nije desilo",
-            publishedDate = "22. 11. 2023."
+            publishedDate = "18. 04. 2025."
         ),
         NewsItem(
             id = "19",
@@ -196,7 +196,7 @@ object NewsData {
             category = "Sport",
             isFeatured = true,
             source = "Bit ce ako Bog da",
-            publishedDate = "24. 11. 2023."
+            publishedDate = "19. 04. 2024."
         ),
         NewsItem(
             id = "20",
@@ -206,10 +206,8 @@ object NewsData {
             category = "Sport",
             isFeatured = true,
             source = "Bit ce ako Bog da",
-            publishedDate = "24. 11. 2023."
+            publishedDate = "20. 04. 2020."
         )
-
-
     )
     fun getAllNews(): List<NewsItem> {
         return newsItems
