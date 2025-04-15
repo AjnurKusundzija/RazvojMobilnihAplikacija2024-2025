@@ -1,3 +1,5 @@
+
+
 package etf.ri.rma.newsfeedapp.screen
 import MessageCard
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -38,31 +40,32 @@ import etf.ri.rma.newsfeedapp.ui.theme.NewsFeedAppTheme
 
 @Composable
 fun FilterChipComponent(
-    selectedCategory: String,
-    onClick: (String) -> Unit,
-    assignedCategory: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    labelText: String,
     testTag: String,
     colors: SelectableChipColors
 ) {
-    val tintboja = if (isSystemInDarkTheme()) Color.White else Color.Black
-    val bojatekstachip = if (isSystemInDarkTheme()) Color.White else Color.Black
+    val kvakica= if (isSystemInDarkTheme()) Color.White else Color.Black
+    val textboja = if (isSystemInDarkTheme()) Color.White else Color.Black
+
     FilterChip(
-        onClick = { onClick(assignedCategory) },
+        selected = isSelected,
+        onClick = onClick,
         label = {
             Text(
-                text = assignedCategory,
-                style = MaterialTheme.typography.bodyMedium.copy(color = bojatekstachip)
+                text = labelText,
+                style = MaterialTheme.typography.bodyMedium.copy(color = textboja)
             )
         },
         modifier = Modifier.testTag(testTag),
-        selected = selectedCategory == assignedCategory,
         colors = colors,
-        leadingIcon = if (selectedCategory == assignedCategory) {
+        leadingIcon = if (isSelected) {
             {
                 Icon(
                     imageVector = Icons.Filled.Done,
                     contentDescription = "Done icon",
-                    tint = tintboja,
+                    tint = kvakica,
                     modifier = Modifier.size(FilterChipDefaults.IconSize)
                 )
             }
@@ -72,47 +75,47 @@ fun FilterChipComponent(
 
 @Composable
 fun NewsFeedScreen() {
-    val newsItems by remember { mutableStateOf(NewsData.getAllNews()) }
-    var filteredNews by remember { mutableStateOf(newsItems) }
-    var selectedCategory by remember { mutableStateOf("Sve") }
+    val allNews by remember { mutableStateOf(NewsData.getAllNews()) }
+    var kategorije by remember { mutableStateOf(setOf("Sve")) }
 
-    fun changeCategory(newCategory: String) {
-        selectedCategory = newCategory
-        filteredNews = if (newCategory == "Sve") {
-            newsItems
-        } else {
-            newsItems.filter { it.category == newCategory }
+    val bojachipa = FilterChipDefaults.filterChipColors(
+        containerColor = if (isSystemInDarkTheme()) Color(0xFF534B4B) else Color(0xFF798DDC),
+        selectedContainerColor = if (isSystemInDarkTheme()) Color(0xFF3E3A3A) else Color(0xFF42608a)
+    )
+
+    val bojapozadine = if (isSystemInDarkTheme()) Color(0xFF0F101B) else Color(0xFFBDBFCB)
+
+    val chipovi = listOf(
+        ChipData("Sve", "filter_chip_all", "Sve"),
+        ChipData("Politika", "filter_chip_pol", "Politika"),
+        ChipData("Sport", "filter_chip_spo", "Sport"),
+        ChipData("Nauka/Tehnologija", "filter_chip_sci", "Nauka/Tehnologija"),
+        ChipData("Zdravlje", "filter_chip_none", "Zdravlje")
+    )
+
+    val filteredNews = if (kategorije.contains("Sve")) {
+        allNews
+    } else {
+        allNews.filter { it.category in kategorije }
+    }
+
+    fun onCategoryClick(category: String) {
+        kategorije = when {
+            category == "Sve" -> setOf("Sve")//pocetno stanje
+            kategorije.contains(category) -> {
+                val azuriran= kategorije - category
+                if (azuriran.isEmpty()) setOf("Sve") else azuriran//test za zdravlje
+            }
+            else -> (kategorije - "Sve") + category
         }
     }
 
-    val chipboja = if (isSystemInDarkTheme()) {
-        Color(0xFF534B4B)
-    } else {
-        Color(0xFF798DDC)
-    }
-
-    val selektovanchip = if (isSystemInDarkTheme()) {
-        Color(0xFF3E3A3A)
-    } else {
-        Color(0xFF42608a)
-    }
-
-    val chip_boja = FilterChipDefaults.filterChipColors(
-        containerColor = chipboja,
-        selectedContainerColor = selektovanchip
-    )
-
-    val pozadina = if (isSystemInDarkTheme()) Color(0xFF0F101B) else Color(0xFFBDBFCB)
-
     Surface(
-        color = pozadina,
+        color = bojapozadine,
         modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier.padding(top = 28.dp)
-        ) {
+        Column(modifier = Modifier.padding(top = 28.dp)) {
             Spacer(modifier = Modifier.padding(vertical = 6.dp))
-
 
             LazyRow(
                 modifier = Modifier
@@ -120,48 +123,26 @@ fun NewsFeedScreen() {
                     .padding(horizontal = 8.dp, vertical = 3.5.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                val filteri = listOf(
-                    ChipData("Sve", "filter_chip_all", "Sve"),
-                    ChipData("Politika", "filter_chip_pol", "Politika"),
-                    ChipData("Sport", "filter_chip_spo", "Sport"),
-                    ChipData("Nauka/Tehnologija", "filter_chip_sci", "Nauka/Tehnologija")
-                )
-                items(filteri) { chip ->
+                items(chipovi) { chip ->
                     FilterChipComponent(
-                        assignedCategory = chip.kategorija,
-                        selectedCategory = selectedCategory,
-                        onClick = { changeCategory(it) },
+                        isSelected = kategorije.contains(chip.kategorija),//ako je odabrana ta kategorije
+                        onClick = { onCategoryClick(chip.kategorija) },
+                        labelText = chip.kategorija,
                         testTag = chip.tag,
-                        colors = chip_boja
+                        colors = bojachipa
                     )
                 }
-            }
-
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 3.5.dp),
-                horizontalArrangement = Arrangement.Start
-            ) {
-                val chipZdravlje = ChipData("Zdravlje", "filter_chip_none", "Zdravlje")
-                FilterChipComponent(
-                    assignedCategory = chipZdravlje.kategorija,
-                    selectedCategory = selectedCategory,
-                    onClick = { changeCategory(it) },
-                    testTag = chipZdravlje.tag,
-                    colors = chip_boja
-                )
             }
 
             if (filteredNews.isNotEmpty()) {
                 NewsList(filteredNews)
             } else {
-                MessageCard(selectedCategory)
+                MessageCard(kategorije.joinToString())
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -170,3 +151,4 @@ fun PreviewNewsFeedScreen() {
             NewsFeedScreen()
         }
     }
+
