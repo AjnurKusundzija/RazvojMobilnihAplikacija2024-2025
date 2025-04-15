@@ -25,22 +25,6 @@ import androidx.compose.ui.unit.dp
 import etf.ri.rma.newsfeedapp.R
 import etf.ri.rma.newsfeedapp.model.NewsItem
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @Composable
 fun FeaturedNewsCard(news: NewsItem) {
     val bojakartice = if (isSystemInDarkTheme()) {
@@ -69,7 +53,7 @@ fun FeaturedNewsCard(news: NewsItem) {
             )
             Text(
                 text = news.title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = Bold,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,

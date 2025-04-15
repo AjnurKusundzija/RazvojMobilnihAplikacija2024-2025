@@ -59,7 +59,7 @@ fun StandardNewsCard(newsItem: NewsItem) {
             ) {
                 Text(
                     text = newsItem.title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleLarge,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurface
