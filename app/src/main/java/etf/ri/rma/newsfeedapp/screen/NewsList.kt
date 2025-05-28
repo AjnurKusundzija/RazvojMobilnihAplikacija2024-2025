@@ -23,7 +23,7 @@ fun NewsList(newsList: List<NewsItem>,navController: NavHostController) {
         newsList.forEach { news ->
             item {
                 NewsCard(news = news, onClick = {
-                    navController.navigate("details/${news.id}")
+                    navController.navigate("details/${news.uuid}")
                 })
             }
         }

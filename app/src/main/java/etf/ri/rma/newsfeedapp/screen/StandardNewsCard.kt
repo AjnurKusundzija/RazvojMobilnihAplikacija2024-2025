@@ -1,6 +1,6 @@
 package etf.ri.rma.newsfeedapp.screen
 
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import etf.ri.rma.newsfeedapp.R
 import etf.ri.rma.newsfeedapp.model.NewsItem
 
+import coil.compose.AsyncImage
+
 @Composable
 fun StandardNewsCard(newsItem: NewsItem, onClick: () -> Unit) {
     val bojakartice = if (isSystemInDarkTheme()) {
@@ -46,10 +48,12 @@ fun StandardNewsCard(newsItem: NewsItem, onClick: () -> Unit) {
             modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.vijesti),
+            AsyncImage(
+                model = newsItem.imageUrl?.takeIf { it.isNotBlank() } ?: "",
                 contentDescription = "News Image",
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.vijesti),
+                error = painterResource(id = R.drawable.vijesti),
                 modifier = Modifier
                     .width(97.dp)
                     .height(105.dp)
@@ -60,7 +64,7 @@ fun StandardNewsCard(newsItem: NewsItem, onClick: () -> Unit) {
                     .weight(1f)
             ) {
                 Text(
-                    text = newsItem.title,
+                    text = newsItem.title.toString(),
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -68,7 +72,7 @@ fun StandardNewsCard(newsItem: NewsItem, onClick: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = newsItem.snippet,
+                    text = newsItem.snippet.toString(),
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
@@ -80,7 +84,7 @@ fun StandardNewsCard(newsItem: NewsItem, onClick: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = newsItem.source,
+                        text = newsItem.source.toString(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -89,7 +93,7 @@ fun StandardNewsCard(newsItem: NewsItem, onClick: () -> Unit) {
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = newsItem.publishedDate,
+                        text = newsItem.publishedDate.toString(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface
                     )

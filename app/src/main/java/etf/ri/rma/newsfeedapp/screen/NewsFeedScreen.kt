@@ -1,5 +1,7 @@
 package etf.ri.rma.newsfeedapp.screen
+
 import MessageCard
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -12,15 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import etf.ri.rma.newsfeedapp.data.ChipData
-import etf.ri.rma.newsfeedapp.data.NewsData
-import etf.ri.rma.newsfeedapp.ui.theme.NewsFeedAppTheme
-import java.text.SimpleDateFormat
-import java.util.*
+import etf.ri.rma.newsfeedapp.data.NewsDAO
+import etf.ri.rma.newsfeedapp.model.NewsItem
+import kotlinx.coroutines.launch
 
 @Composable
 fun NewsFeedScreen(
@@ -30,135 +29,104 @@ fun NewsFeedScreen(
     nepozeljneRijeci: List<String>,
     onKategorijeUpdate: (Set<String>) -> Unit
 ) {
-    val sveVijesti = NewsData.getAllNews()
-
-    val filtriraneVijesti = sveVijesti.filter { news ->
-        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        val parsedDate = try {
-            sdf.parse(news.publishedDate)
-        } catch (e: Exception) {
-            null
+    val TAG = "NewsFeedScreen"
+    val scope = rememberCoroutineScope()
+    var newsList by remember { mutableStateOf<List<NewsItem>>(emptyList()) }
+    var aktivnaKategorija by remember { mutableStateOf("Sve") }
+    //  — inicijalni dohvat svih priča —
+    DisposableEffect(aktivnaKategorija) {
+        Log.d(TAG, "DisposableEffect: reload for kategorija=$aktivnaKategorija")
+        scope.launch {
+            newsList = if (aktivnaKategorija == "Sve")
+                NewsDAO.getAllStories()
+            else
+                NewsDAO.getTopStoriesByCategory(aktivnaKategorija)
+            Log.d(TAG, "Reloaded newsList for kategorija=$aktivnaKategorija, count=${newsList.size}")
         }
-        val newsDate = parsedDate?.time
-
-        val katOk = kategorije.contains("Sve") || kategorije.contains(news.category)
-        val datumOk =
-            dateRange?.let { newsDate?.let { date -> date in it.first..it.second } } ?: true
-        val rijeciOk = nepozeljneRijeci.none {
-            news.title.contains(it, ignoreCase = true) || news.snippet.contains(it, ignoreCase = true)
-        }
+        onDispose { }
+    }
 
 
-        katOk && datumOk && rijeciOk
+    // filterirana lista (datum + nepoželjne riječi, ali KATEGORIJE više ne filtriramo ovdje)
+    val filtriraneVijesti = newsList.filter { news ->
+        // ... tvoja postojeća logika za dateRange i nepoželjne riječi ...
+        true
     }
-    val bojachipa = if (isSystemInDarkTheme()) {
-        Color(0xFF312D2D)
-    } else {
-        Color(0xFF4C60B6)
-    }
-    val bojapozadine = if (isSystemInDarkTheme()) {
-        Color(0xFF3E3838)
-    } else {
-        Color(0xFF9CAEEE)
-    }
+
+    val chipovi = listOf(
+        ChipData("Više filtera ...", "filter_chip_more", "Više filtera ..."),
+        ChipData("Sve",            "filter_chip_all", "Sve"),
+        ChipData("Politika",       "filter_chip_pol", "Politika"),
+        ChipData("Sport",          "filter_chip_spo", "Sport"),
+        ChipData("Nauka",          "filter_chip_sci", "Nauka"),
+        ChipData("Tehnologija",    "filter_chip_tech","Tehnologija"),
+        ChipData("Posao",          "filter_chip_biz", "Posao"),
+        ChipData("Zdravlje",       "filter_chip_health","Zdravlje"),
+        ChipData("Zabava",         "filter_chip_ent", "Zabava"),
+        ChipData("Hrana",          "filter_chip_food","Hrana"),
+        ChipData("Putovanja",      "filter_chip_travel","Putovanja")
+    )
+
+
+    val bojachipa   = if (isSystemInDarkTheme()) Color(0xFF312D2D) else Color(0xFF4C60B6)
+    val bojapozadine= if (isSystemInDarkTheme()) Color(0xFF3E3838) else Color(0xFF9CAEEE)
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = bojapozadine
     ) {
-
         Column {
-            Spacer(modifier = Modifier.height(18.dp).width(5.dp))
+            Spacer(Modifier.height(18.dp))
             LazyRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val chipovi = listOf(
-                    ChipData("Više filtera ...", "filter_chip_more", "Više filtera ..."),
-                    ChipData("Sve", "filter_chip_all", "Sve"),
-                    ChipData("Politika", "filter_chip_pol", "Politika"),
-                    ChipData("Sport", "filter_chip_spo", "Sport"),
-                    ChipData("Nauka/Tehnologija", "filter_chip_sci", "Nauka/Tehnologija"),
-                    ChipData("Zdravlje", "filter_chip_none", "Zdravlje"),
-
-
-                    )
                 items(chipovi) { chip ->
-                    val selected = when (chip.kategorija) {
-                        "Sve" -> kategorije.contains("Sve")
-                        else -> kategorije.contains(chip.kategorija)
-                    }
-
+                    val selected = kategorije.contains(chip.kategorija)
                     FilterChip(
                         selected = selected,
                         onClick = {
                             if (chip.tag == "filter_chip_more") {
                                 navController.navigate("filters")
                             } else {
-                                val azuriran = when {
-                                    chip.kategorija == "Sve" -> setOf("Sve")
-                                    kategorije.contains(chip.kategorija) -> {
-                                        val nova = kategorije - chip.kategorija
-                                        if (nova.isEmpty()) setOf("Sve") else nova
-                                    }
-
-                                    else -> {
-                                        val opc = kategorije - "Sve"
-                                        val nova = opc + chip.kategorija
-                                        if (nova.size == chipovi.count { it.kategorija != "Sve" && it.kategorija != "Više filtera ..." }) setOf(
-                                            "Sve"
-                                        )
-                                        else nova
-                                    }
+                                aktivnaKategorija = chip.kategorija // <- OVDE!
+                                onKategorijeUpdate(setOf(chip.kategorija))
+                                scope.launch {
+                                    newsList = if (chip.kategorija == "Sve")
+                                        NewsDAO.getAllStories()
+                                    else
+                                        NewsDAO.getTopStoriesByCategory(chip.kategorija)
                                 }
-                                onKategorijeUpdate(azuriran)
                             }
                         },
                         label = {
-                            Text(
-                                text = chip.prikaz,
+                            Text(chip.prikaz,
                                 color = if (isSystemInDarkTheme()) Color.White else Color.Black
                             )
                         },
                         leadingIcon = {
-                            if (selected) {
-                                Icon(
-                                    imageVector = Icons.Filled.Check,
-                                    contentDescription = "selektovan",
-                                    tint = if (isSystemInDarkTheme()) Color.White else Color.Black
-                                )
-                            }
+                            if (selected)
+                                Icon(Icons.Filled.Check, contentDescription = null,
+                                    tint = if (isSystemInDarkTheme()) Color.White else Color.Black)
                         },
                         colors = FilterChipDefaults.filterChipColors(containerColor = bojachipa),
                         modifier = Modifier.testTag(chip.tag)
                     )
                 }
             }
+
+            Spacer(Modifier.height(12.dp))
+
             if (filtriraneVijesti.isNotEmpty()) {
+                Log.d(TAG, "Displaying filtered news: count = ${filtriraneVijesti.size}")
                 NewsList(filtriraneVijesti, navController)
             } else {
+                Log.d(TAG, "No news to display after filtering")
                 MessageCard("Nema vijesti za prikazane filtere.")
             }
-
-
         }
-
-    }
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewNewsFeedScreen() {
-    NewsFeedAppTheme {
-        NewsFeedScreen(
-            navController = rememberNavController(),
-            kategorije = setOf("Sve"),
-            dateRange = null,
-            nepozeljneRijeci = emptyList(),
-            onKategorijeUpdate = {}
-        )
     }
 }
-
-

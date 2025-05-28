@@ -1,5 +1,5 @@
 package etf.ri.rma.newsfeedapp.screen
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import etf.ri.rma.newsfeedapp.R
 import etf.ri.rma.newsfeedapp.model.NewsItem
 
+import coil.compose.AsyncImage
+
 @Composable
 fun FeaturedNewsCard(news: NewsItem, onClick: () -> Unit) {
     val bojakartice = if (isSystemInDarkTheme()) {
@@ -36,24 +39,25 @@ fun FeaturedNewsCard(news: NewsItem, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(3.5.dp)
-        .clickable(onClick = onClick),
+            .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.large,
         elevation = CardDefaults.cardElevation(5.dp),
         colors = CardDefaults.cardColors(containerColor = bojakartice),
-
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.vijesti),
+            AsyncImage(
+                model = news.imageUrl?.takeIf { it.isNotBlank() } ?: "",
                 contentDescription = "image",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth()
+                placeholder = painterResource(id = R.drawable.vijesti),
+                error = painterResource(id = R.drawable.vijesti),
+                modifier = Modifier.fillMaxWidth().height(180.dp)
             )
             Text(
-                text = news.title,
+                text = news.title.toString(),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = Bold,
                 maxLines = 2,
@@ -61,7 +65,7 @@ fun FeaturedNewsCard(news: NewsItem, onClick: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = news.snippet,
+                text = news.snippet.toString(),
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -74,7 +78,7 @@ fun FeaturedNewsCard(news: NewsItem, onClick: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = news.source,
+                    text = news.source.toString(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -84,7 +88,7 @@ fun FeaturedNewsCard(news: NewsItem, onClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = news.publishedDate,
+                    text = news.publishedDate.toString(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )

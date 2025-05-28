@@ -73,11 +73,17 @@ fun FilterScreen(
     }
 
     val chipovi = listOf(
-        ChipData("Sve", "filter_chip_all", "Sve"),
-        ChipData("Politika", "filter_chip_pol", "Politika"),
-        ChipData("Sport", "filter_chip_spo", "Sport"),
-        ChipData("Nauka/Tehnologija", "filter_chip_sci", "Nauka/Tehnologija"),
-        ChipData("Zdravlje", "filter_chip_none", "Zdravlje")
+        ChipData("Više filtera ...", "filter_chip_more", "Više filtera ..."),
+        ChipData("Sve",            "filter_chip_all", "Sve"),
+        ChipData("Politika",       "filter_chip_pol", "Politika"),
+        ChipData("Sport",          "filter_chip_spo", "Sport"),
+        ChipData("Nauka",          "filter_chip_sci", "Nauka"),
+        ChipData("Tehnologija",    "filter_chip_tech","Tehnologija"),
+        ChipData("Posao",          "filter_chip_biz", "Posao"),
+        ChipData("Zdravlje",       "filter_chip_health","Zdravlje"),
+        ChipData("Zabava",         "filter_chip_ent", "Zabava"),
+        ChipData("Hrana",          "filter_chip_food","Hrana"),
+        ChipData("Putovanja",      "filter_chip_travel","Putovanja")
     )
 
     val bojachipa = if (isSystemInDarkTheme()) Color(0xFF312D2D) else Color(0xFF4C60B6)

@@ -2,7 +2,126 @@ package etf.ri.rma.newsfeedapp.data
 
 import etf.ri.rma.newsfeedapp.model.NewsItem
 
+object NewsData {
+    val newsItems = mutableListOf(
+        NewsItem(
+            uuid = "f8d30bfc-a197-47d5-b692-539e7fbcda18",
+            title = "Boxer Georgia O’Connor’s Husband Working On ‘Muscles’ After Her Death",
+            snippet = "Adriano Cardinali, the husband of late boxer Georgia O’Connor, is prioritizing his mental and physical health after her death.\n\n“Working on three things rig...",
+            imageUrl = "https://www.usmagazine.com/wp-content/uploads/2025/05/Inside-Boxer-Georgia-O-Connor-s-Relationship-With-Husband-Adriano-Cardinali-Before-Her-Death-feature.jpg?crop=0px%2C412px%2C1601px%2C841px&resize=1200%2C630&quality=40&strip=all",
+            category = "entertainment",
+            isFeatured = false,
+            source = "usmagazine.com",
+            publishedDate = "26-05-2025",
+            imageTags = arrayListOf()
+        ),
+        NewsItem(
+            uuid = "c8bf2fd1-b001-426a-8d35-2c816d10b3c6",
+            title = "Nikon’s cameras will get more expensive after June 23rd",
+            snippet = "is a senior reporter who’s been covering and reviewing the latest gadgets and tech since 2006, but has loved all things electronic since he was a kid.\n\nAfter ...",
+            imageUrl = "https://platform.theverge.com/wp-content/uploads/sites/2/2025/04/nikon2.jpg?quality=90&strip=all&crop=0%2C10.740836125969%2C100%2C78.518327748063&w=1200",
+            category = "tech",
+            isFeatured = true,
+            source = "theverge.com",
+            publishedDate = "26-05-2025",
+            imageTags = arrayListOf()
+        ),
+        NewsItem(
+            uuid = "f4b041fd-113b-4846-8762-08f3e94705ae",
+            title = "RHONJ Alum Dina Manzo’s Daughter Lexi on Tommy Manzo Relationship",
+            snippet = "The Real Housewives of New Jersey alum Dina Manzo’s daughter, Lexi Ioannou, got real about her relationship with former stepfather Tommy Manzo.\n\n“He had thi...",
+            imageUrl = "https://www.usmagazine.com/wp-content/uploads/2025/05/GettyImages-509965160-Lexi-and-Dina-Manzo.jpg?crop=74px%2C70px%2C1228px%2C644px&resize=1200%2C630&quality=55&strip=all",
+            category = "entertainment",
+            isFeatured = false,
+            source = "usmagazine.com",
+            publishedDate = "26-05-2025",
+            imageTags = arrayListOf()
+        ),
+        NewsItem(
+            uuid = "53f31e63-2f44-457e-a5d7-1d744fd6b1e7",
+            title = "Euro could dethrone US dollar – ECB",
+            snippet = "Global investors are worried about Washington’s recent trade policy moves, the European Central Bank chief has said\n\nThe euro could become a strong alternativ...",
+            imageUrl = "https://mf.b37mrtl.ru/files/2025.05/article/68348d6c85f5403fda1e867c.jpg",
+            category = "general",
+            isFeatured = true,
+            source = "rt.com",
+            publishedDate = "26-05-2025",
+            imageTags = arrayListOf()
+        ),
+        NewsItem(
+            uuid = "75b59679-5e57-43dd-86a9-cafdcd85c168",
+            title = "Indy 500 runner-up Marcus Ericsson penalized to 31st",
+            snippet = "INDIANAPOLIS -- Indianapolis 500 runner-up Marcus Ericsson was penalized to the rear of the 33-car field along with Andretti Global teammate Kyle Kirkwood on Mo...",
+            imageUrl = "https://a4.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0526%2Fr1498677_1296x729_16%2D9.jpg",
+            category = "sports",
+            isFeatured = false,
+            source = "espn.com",
+            publishedDate = "26-05-2025",
+            imageTags = arrayListOf()
+        ),
+        NewsItem(
+            uuid = "0a770333-ac9d-4eba-acf4-f0c32103a5bf",
+            title = "Liverpool parade: Police detain man after car collides into crowd",
+            snippet = "A man has been detained after a car drove into the crowd at Liverpool's title celebrations. Photo by Getty Images\n\nA man has been detained after a car collided ...",
+            imageUrl = "https://a3.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0526%2Fr1498658_1296x729_16%2D9.jpg",
+            category = "sports",
+            isFeatured = true,
+            source = "espn.com",
+            publishedDate = "26-05-2025",
+            imageTags = arrayListOf()
+        ),
+        NewsItem(
+            uuid = "793933ff-62b5-4c29-a7f5-5847cd369cf5",
+            title = "Villa's fury over ref, Modric and Ancelotti exit Madrid, more",
+            snippet = "Open Extended Reactions\n\nWe're almost at the end of the 2024-25 European club soccer season, but this weekend still gave us some unforgettable moments, big talk...",
+            imageUrl = "https://a1.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0526%2Fr1498502_1296x729_16%2D9.jpg",
+            category = "sports",
+            isFeatured = false,
+            source = "espn.co.uk",
+            publishedDate = "26-05-2025",
+            imageTags = arrayListOf()
+        ),
+        NewsItem(
+            uuid = "ca5c9196-3c16-4349-8600-8e7b575d1613",
+            title = "Lotte Wubben-Moy to replace Millie Bright in England squad",
+            snippet = "Open Extended Reactions\n\nLotte Wubben-Moy has been called up to replace Millie Bright in the England squad for the upcoming Nations League games against Portuga...",
+            imageUrl = "https://a4.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0526%2Fr1498519_1296x729_16%2D9.jpg",
+            category = "sports",
+            isFeatured = true,
+            source = "espn.co.uk",
+            publishedDate = "26-05-2025",
+            imageTags = arrayListOf()
+        ),
+        NewsItem(
+            uuid = "123c1e4f-038d-4dda-9674-a502257f7a1d",
+            title = "European Under-17 Championship: Arsenal's Max Dowman scores goal",
+            snippet = "We're at the other side of it - Kelly on 'highs and lows' of football. Video, 00:02:52We're at the other side of it - Kelly on 'highs and lows' of football",
+            imageUrl = "https://ichef.bbci.co.uk/ace/standard/1024/cpsprodpb/02b0/live/55fe62f0-3a68-11f0-8947-7d6241f9fce9.jpg",
+            category = "sports",
+            isFeatured = false,
+            source = "bbc.co.uk",
+            publishedDate = "26-05-2025",
+            imageTags = arrayListOf()
+        ),
+        NewsItem(
+            uuid = "7c8bfa33-d7a9-4bb1-b8d2-e54b177c88ab",
+            title = "Why Oilers’ Ekholm isn’t rushing things even though he’s feeling healthy",
+            snippet = "Sign in to Sportsnet\n\nSign In Sign Up\n\nFirst Name {* traditionalRegistration_firstName *} {* traditionalRegistration_firstName *} Last Name {* traditionalRegist...",
+            imageUrl = "https://www.sportsnet.ca/sn_favicon.ico",
+            category = "sports",
+            isFeatured = true,
+            source = "sportsnet.ca",
+            publishedDate = "26-05-2025",
+            imageTags = arrayListOf()
+        )
 
+
+    )
+
+}
+
+
+/*
 object NewsData {
     val newsItems = listOf(
         NewsItem(
@@ -212,4 +331,4 @@ object NewsData {
     fun getAllNews(): List<NewsItem> {
         return newsItems
     }
-}
+}*/
