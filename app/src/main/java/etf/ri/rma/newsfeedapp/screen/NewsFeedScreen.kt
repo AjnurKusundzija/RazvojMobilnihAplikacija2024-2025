@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import etf.ri.rma.newsfeedapp.data.ChipData
-import etf.ri.rma.newsfeedapp.data.NewsDAO
+import etf.ri.rma.newsfeedapp.data.network.NewsDAO
 import etf.ri.rma.newsfeedapp.model.NewsItem
 import kotlinx.coroutines.launch
 
@@ -31,21 +31,22 @@ fun NewsFeedScreen(
 ) {
     val TAG = "NewsFeedScreen"
     val scope = rememberCoroutineScope()
+    val newsDAO = remember { NewsDAO() } // KREIRAJ INSTANCU!!!
     var newsList by remember { mutableStateOf<List<NewsItem>>(emptyList()) }
     var aktivnaKategorija by remember { mutableStateOf("Sve") }
+
     //  — inicijalni dohvat svih priča —
     DisposableEffect(aktivnaKategorija) {
         Log.d(TAG, "DisposableEffect: reload for kategorija=$aktivnaKategorija")
         scope.launch {
             newsList = if (aktivnaKategorija == "Sve")
-                NewsDAO.getAllStories()
+                newsDAO.getAllStories()
             else
-                NewsDAO.getTopStoriesByCategory(aktivnaKategorija)
+                newsDAO.getTopStoriesByCategory(aktivnaKategorija)
             Log.d(TAG, "Reloaded newsList for kategorija=$aktivnaKategorija, count=${newsList.size}")
         }
         onDispose { }
     }
-
 
     // filterirana lista (datum + nepoželjne riječi, ali KATEGORIJE više ne filtriramo ovdje)
     val filtriraneVijesti = newsList.filter { news ->
@@ -66,7 +67,6 @@ fun NewsFeedScreen(
         ChipData("Hrana",          "filter_chip_food","Hrana"),
         ChipData("Putovanja",      "filter_chip_travel","Putovanja")
     )
-
 
     val bojachipa   = if (isSystemInDarkTheme()) Color(0xFF312D2D) else Color(0xFF4C60B6)
     val bojapozadine= if (isSystemInDarkTheme()) Color(0xFF3E3838) else Color(0xFF9CAEEE)
@@ -92,13 +92,13 @@ fun NewsFeedScreen(
                             if (chip.tag == "filter_chip_more") {
                                 navController.navigate("filters")
                             } else {
-                                aktivnaKategorija = chip.kategorija // <- OVDE!
+                                aktivnaKategorija = chip.kategorija
                                 onKategorijeUpdate(setOf(chip.kategorija))
                                 scope.launch {
                                     newsList = if (chip.kategorija == "Sve")
-                                        NewsDAO.getAllStories()
+                                        newsDAO.getAllStories()
                                     else
-                                        NewsDAO.getTopStoriesByCategory(chip.kategorija)
+                                        newsDAO.getTopStoriesByCategory(chip.kategorija)
                                 }
                             }
                         },

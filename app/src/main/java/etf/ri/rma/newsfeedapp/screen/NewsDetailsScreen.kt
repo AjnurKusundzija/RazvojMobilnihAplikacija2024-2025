@@ -19,23 +19,25 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import etf.ri.rma.newsfeedapp.R
-import etf.ri.rma.newsfeedapp.data.ImaggaDAO
-import etf.ri.rma.newsfeedapp.data.NewsDAO
+import etf.ri.rma.newsfeedapp.data.network.NewsDAO
+import etf.ri.rma.newsfeedapp.data.network.ImagaDAO
 import etf.ri.rma.newsfeedapp.model.NewsItem
 
 private const val TAG = "NewsDetailsScreen"
 
 @Composable
-fun NewsDetailsScreen(newsId: String, navController: NavController, onBack: () -> Unit) {
+ fun NewsDetailsScreen(newsId: String, navController: NavController, onBack: () -> Unit) {
     Log.d(TAG, "Displaying NewsDetailsScreen for newsId=$newsId")
 
     val background = if (isSystemInDarkTheme()) Color(0xFF3E3838) else Color(0xFF798DDC)
     val titleBg    = if (isSystemInDarkTheme()) Color(0xFF797272) else Color(0xFF9191B6)
 
+    // KORISTI INSTANCU DAO-a (ne više object!)
+    val NewsDAO = remember { NewsDAO() }
+    val ImagaDAO = remember { ImagaDAO() }
+
     // 1) Dohvat svih vijesti
-    val all = NewsDAO.getAllStories().also {
-        Log.d(TAG, "getAllStories returned ${it.size} items: ${it.map { it.uuid }}")
-    }
+    val all = remember { NewsDAO.getAllStories() }
     val vijest = all.find { it.uuid == newsId }
     if (vijest == null) {
         Log.e(TAG, "NewsItem not found for id=$newsId. Cached UUIDs: ${all.map { it.uuid }}")
@@ -44,7 +46,6 @@ fun NewsDetailsScreen(newsId: String, navController: NavController, onBack: () -
 
     Log.d(TAG, "Found item: ${vijest.title}")
 
-    // State
     var imageTags        by remember { mutableStateOf<List<String>>(emptyList()) }
     var isLoadingTags    by remember { mutableStateOf(true) }
     var tagsError        by remember { mutableStateOf(false) }
@@ -61,7 +62,7 @@ fun NewsDetailsScreen(newsId: String, navController: NavController, onBack: () -
         val url = vijest.imageUrl.orEmpty()
         Log.d(TAG, "Fetching image tags for URL='$url'")
         try {
-            imageTags = if (url.isNotBlank()) ImaggaDAO.getTags(url) else emptyList()
+            imageTags = if (url.isNotBlank()) ImagaDAO.getTags(url) else emptyList()
             Log.d(TAG, "Tags fetched (${imageTags.size}): $imageTags")
         } catch (e: Exception) {
             tagsError = true
@@ -74,7 +75,7 @@ fun NewsDetailsScreen(newsId: String, navController: NavController, onBack: () -
         isLoadingSimilar = true
         Log.d(TAG, "Fetching similar stories for uuid='$newsId'")
         try {
-            relatedNews = NewsDAO.getSimilarStories(newsId)
+            relatedNews = NewsDAO.getSimilarStories(newsId, vijest.category)
             Log.d(TAG, "Similar stories fetched (${relatedNews.size})")
         } catch (e: Exception) {
             relatedNews = emptyList()

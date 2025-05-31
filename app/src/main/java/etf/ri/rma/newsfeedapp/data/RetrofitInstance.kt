@@ -1,6 +1,8 @@
 package etf.ri.rma.newsfeedapp.data
 
 
+import etf.ri.rma.newsfeedapp.data.network.api.ImagaApiService
+import etf.ri.rma.newsfeedapp.data.network.api.NewsApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -16,7 +18,7 @@ object RetrofitInstance {
 
     private val retrofit2 by lazy {
         Retrofit.Builder()
-            .baseUrl("https://api.imagga.com/v2/")
+            .baseUrl("https://api.imagga.com/")
 
             .addConverterFactory(GsonConverterFactory.create())
             .build()

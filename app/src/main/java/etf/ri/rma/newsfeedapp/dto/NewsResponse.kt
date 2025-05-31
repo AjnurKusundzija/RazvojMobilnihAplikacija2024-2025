@@ -28,3 +28,6 @@ data class NewsItemDto(
     val relevance_score: Double?, // može biti null!
     val locale: String
 )
+
+
+

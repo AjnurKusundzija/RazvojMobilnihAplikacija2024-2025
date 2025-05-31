@@ -1,20 +1,29 @@
 package etf.ri.rma.newsfeedapp.util
 
 object CategoryMapper {
-    private val displayToApi = mapOf(
-        "General" to "general",
-        "Nauka" to "science",
-        "Sport" to "sports",
-        "Biznis" to "business",
-        "Zdravlje" to "health",
-        "Zabava" to "entertainment",
-        "Tehnologija" to "tech",
-        "Politika" to "politics",
-        "Hrana" to "food",
-        "Putovanja" to "travel"
-    )
+    fun toApiCategory(category: String): String {
+        return when (category) {
+            "Politika" -> "politics"
 
-    fun toApiCategory(displayCategory: String): String =
-        displayToApi[displayCategory] ?: "general"
+            "Sport" -> "sports"
+
+            "Nauka" -> "science"
+
+            "Tehnologija" -> "tech"
+
+            "Nauka/tehnologija" -> "tech"
+            "Zdravlje" -> "health"
+
+            "Zabava" -> "entertainment"
+
+            "Posao" -> "business"
+
+            "Hrana" -> "food"
+
+            "Putovanja" -> "travel"
+
+            "None", "O", "Sve", "All", "general" -> "general"
+            else -> category.lowercase()
+        }
+    }
 }
-

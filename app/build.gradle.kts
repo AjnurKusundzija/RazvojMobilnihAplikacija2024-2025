@@ -70,4 +70,8 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp-tls:4.12.0") // For TLS features like HeldCertificate
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
