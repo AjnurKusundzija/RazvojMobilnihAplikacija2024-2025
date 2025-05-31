@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class ImagaDAO {
-    private val tagsCache = mutableMapOf<String, List<String>>()
+    private val tagovi_cache = mutableMapOf<String, List<String>>()
 
 
     private var apiService: ImagaApiService = RetrofitInstance.imaggaApi
@@ -20,22 +20,22 @@ class ImagaDAO {
        this.apiService = service
     }
 
-    private val urlRegex = Regex("^https?://.*\\.(jpg|jpeg|png|bmp|gif)(\\?.*)?\$", RegexOption.IGNORE_CASE)
+    private val format_regex = Regex("^https?://.*\\.(jpg|jpeg|png|bmp|gif)(\\?.*)?\$", RegexOption.IGNORE_CASE)
 
 
     suspend fun getTags(imageUrl: String): List<String> = withContext(Dispatchers.IO) {
-        if (!urlRegex.matches(imageUrl)) {
+        if (!format_regex.matches(imageUrl)) {
             throw InvalidImageURLException()
         }
 
-        tagsCache[imageUrl]?.let { return@withContext it }
+        tagovi_cache[imageUrl]?.let { return@withContext it }
 
 
         val response: TagsResponse = apiService.getTags(imageUrl)
-        val tagList = response.result?.tags?.mapNotNull { it.tag?.en } ?: emptyList()
+        val lista_tagova = response.result?.tags?.mapNotNull { it.tag?.en } ?: emptyList()
 
-        tagsCache[imageUrl] = tagList
-        return@withContext tagList
+        tagovi_cache[imageUrl] = lista_tagova
+        return@withContext lista_tagova
     }
 
 

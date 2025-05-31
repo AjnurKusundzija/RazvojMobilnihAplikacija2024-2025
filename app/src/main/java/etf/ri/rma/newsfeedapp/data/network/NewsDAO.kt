@@ -1,6 +1,5 @@
 package etf.ri.rma.newsfeedapp.data.network
 
-
 import android.util.Log
 import etf.ri.rma.newsfeedapp.data.NewsData
 import etf.ri.rma.newsfeedapp.data.RetrofitInstance
@@ -11,121 +10,174 @@ import etf.ri.rma.newsfeedapp.model.NewsItem
 import etf.ri.rma.newsfeedapp.util.CategoryMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
-
+import kotlinx.coroutines.delay
 class NewsDAO(
     var newsAPI: NewsApiService = RetrofitInstance.newsApi
 ) {
     companion object {
         private const val TAG = "NewsDAO"
-        private const val API_KEY = "BEovF9RPKzTpn8zxxWOOqKcrQ1t6WsU7UetnJbod"
+        private const val API_KEY = "j0FJB3CLSD52hVciqiUmbsZIqcsnL0larS9SUMhN"
         private const val LANGUAGE = "en"
         private const val CACHE_DURATION_MS = 30_000L
     }
 
-    private val allStoriesCache = mutableListOf<NewsItem>()
+    private val svevijesti_cache = mutableListOf<NewsItem>()
     private val categoryTimestamps = mutableMapOf<String, Long>()
-    private val categoryCache = mutableMapOf<String, List<NewsItem>>()
-    private val similarStoriesCache = mutableMapOf<String, List<NewsItem>>()
-    private val initialNewsData = NewsData.newsItems
-    private var initialDataLoaded = false
+    private val kategorije_cache = mutableMapOf<String, List<NewsItem>>()
+    private val povezanevijesti_cache = mutableMapOf<String, List<NewsItem>>()
+    private val pocetnevijesti = NewsData.newsItems
+    private var JesuUcitanePocetne = false
 
     fun setApiService(service: NewsApiService) {
         newsAPI = service
     }
 
-    // INITIAL LOAD
-    private fun ensureInitialDataLoaded() {
-        if (!initialDataLoaded) {
-            allStoriesCache.clear()
-            allStoriesCache.addAll(initialNewsData)
-            initialDataLoaded = true
+
+    private fun UcitanePocetne() {
+        if (!JesuUcitanePocetne) {
+            svevijesti_cache.clear()
+            svevijesti_cache.addAll(pocetnevijesti)
+            JesuUcitanePocetne = true
         }
     }
 
-    fun getAllStories(): List<NewsItem>  {
-        ensureInitialDataLoaded()
+    fun getAllStories(): List<NewsItem> {
+        UcitanePocetne()
+        return svevijesti_cache
+    }
 
-        return  allStoriesCache
+
+    private fun formatirajDatum_ISO_u_ddMMyyyy(isoString: String?): String? {
+        if (isoString.isNullOrBlank()) return null
+        return try {
+            val instant = Instant.parse(isoString)
+            val lokalni = instant.atZone(ZoneOffset.UTC).toLocalDate()
+            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+            lokalni.format(formatter)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     suspend fun getTopStoriesByCategory(category: String): List<NewsItem> = withContext(Dispatchers.IO) {
-        ensureInitialDataLoaded()
+        UcitanePocetne()
         val now = System.currentTimeMillis()
-        val apiCategory = CategoryMapper.toApiCategory(category)
-        val lastFetchTime = categoryTimestamps[apiCategory] ?: 0L
+        val apikategorija = CategoryMapper.toApiCategory(category)
+        val lastFetchTime = categoryTimestamps[apikategorija] ?: 0L
         val isCacheValid = (now - lastFetchTime) < CACHE_DURATION_MS
 
-        if (isCacheValid && categoryCache.containsKey(apiCategory)) {
-            Log.d("NewsDAO", "Returning from cache for category: $apiCategory, count: ${categoryCache[apiCategory]?.size}")
-            return@withContext categoryCache[apiCategory]!!.take(3)
+
+        if (isCacheValid && kategorije_cache.containsKey(apikategorija)) {
+
+            val cachedStories = kategorije_cache[apikategorija]!!.map { it.copy() }
+
+            svevijesti_cache.forEach { it.isFeatured = false }
+            val brandNewFromCache = cachedStories.filter { story ->
+                svevijesti_cache.none { it.uuid == story.uuid }
+            }
+            brandNewFromCache
+                .asReversed()
+                .forEach { story -> svevijesti_cache.add(0, story) }
+            val olderSameCategory = svevijesti_cache.filter { item ->
+                item.category == apikategorija && cachedStories.none { c -> c.uuid == item.uuid }
+            }
+            return@withContext cachedStories + olderSameCategory
         }
 
+
         try {
-            Log.d("NewsDAO", "Calling getTopStoriesByCategory on API with params: categories=$apiCategory, language=$LANGUAGE, api_token=$API_KEY")
+
+            svevijesti_cache.forEach { it.isFeatured = false }
+
+            Log.d(TAG, "Dohvatanje za kategoriju=$apikategorija")
             val response: NewsResponse = newsAPI.getTopStoriesByCategory(
-                category = apiCategory,
+                category = apikategorija,
                 language = LANGUAGE,
                 apiKey = API_KEY
             )
-            Log.d("NewsDAO", "API response received. Response: $response")
-            val stories = response.data?.map { dto ->
+            Log.d(TAG, "Dohvaceno. Response: $response")
+
+
+            val dohvaceneapivijesti: List<NewsItem> = response.data?.map { dto ->
+                val formatiraniDatum = formatirajDatum_ISO_u_ddMMyyyy(dto.published_at)
                 NewsItem(
                     uuid = dto.uuid,
                     title = dto.title,
                     snippet = dto.description,
                     imageUrl = dto.image_url,
-                    publishedDate = dto.published_at,
+                    publishedDate = formatiraniDatum,
                     source = dto.source,
-                    category = dto.categories.firstOrNull() ?: apiCategory,
+                    category = dto.categories.firstOrNull() ?: apikategorija,
                     isFeatured = true,
                     imageTags = arrayListOf()
                 )
             } ?: emptyList()
 
-            categoryCache[apiCategory] = stories
-            categoryTimestamps[apiCategory] = now
 
-            // Ubaci u globalni cache nove
-            stories.forEach { story ->
-                if (allStoriesCache.none { it.uuid == story.uuid }) {
-                    allStoriesCache.add(story)
-                }
+            kategorije_cache[apikategorija] = dohvaceneapivijesti
+            categoryTimestamps[apikategorija] = now
+
+
+            val najnovije = dohvaceneapivijesti.filter { story ->
+                svevijesti_cache.none { it.uuid == story.uuid }
             }
-            Log.d("NewsDAO", "Returning top stories for category=$apiCategory: ${stories.map { it.uuid }}")
-            return@withContext stories.take(3)
+            najnovije
+                .asReversed()
+                .forEach { story -> svevijesti_cache.add(0, story) }
+
+
+            val istakategorija = svevijesti_cache.filter { item ->
+                item.category == apikategorija && dohvaceneapivijesti.none { fs -> fs.uuid == item.uuid }
+            }
+
+            return@withContext dohvaceneapivijesti + istakategorija
         } catch (e: Exception) {
-            Log.e("NewsDAO", "API ERROR for category=$apiCategory: ${e.message}")
-            if (categoryCache.containsKey(apiCategory)) {
-                return@withContext categoryCache[apiCategory]!!.take(3)
+            Log.e(TAG, "API greska za kategoriju =$apikategorija: ${e.message}")
+
+            if (kategorije_cache.containsKey(apikategorija)) {
+                val novododanevijesti = kategorije_cache[apikategorija]!!.map { it.copy() }
+                svevijesti_cache.forEach { it.isFeatured = false }
+                val brandNewFallback = novododanevijesti.filter { story ->
+                    svevijesti_cache.none { it.uuid == story.uuid }
+                }
+                brandNewFallback
+                    .asReversed()
+                    .forEach { story -> svevijesti_cache.add(0, story) }
+                val olderSameCategory = svevijesti_cache.filter { item ->
+                    item.category == apikategorija && novododanevijesti.none { fs -> fs.uuid == item.uuid }
+                }
+                return@withContext novododanevijesti + olderSameCategory
             }
-            return@withContext allStoriesCache.filter {
-                it.category == apiCategory || it.category == category
-            }.take(3)
+
+            val lokalne = svevijesti_cache.filter { it.category == apikategorija || it.category == category }
+            return@withContext lokalne
         }
     }
 
-
-
-
     suspend fun getSimilarStories(uuid: String, apiToken: String = API_KEY): List<NewsItem> = withContext(Dispatchers.IO) {
         if (!isValidUUID(uuid)) {
-            throw InvalidUUIDException("Invalid UUID: $uuid")
+            throw InvalidUUIDException("Neispravan uuid: $uuid")
         }
-        similarStoriesCache[uuid]?.let { return@withContext it }
+        povezanevijesti_cache[uuid]?.let { return@withContext it }
         try {
+            svevijesti_cache.forEach { it.isFeatured = false }
+
             val response = newsAPI.getSimilarStories(
                 uuid = uuid,
-                apiToken = apiToken  // OVDJE KORISTI PARAMETAR, NE fiksni API_KEY!
+                apiToken = apiToken
             )
-            val similarStories = response.data?.map { dto ->
+            val slicnevijesti: List<NewsItem> = response.data?.map { dto ->
+                val formatiraniDatum = formatirajDatum_ISO_u_ddMMyyyy(dto.published_at)
                 NewsItem(
                     uuid = dto.uuid,
                     title = dto.title,
                     snippet = dto.description,
                     imageUrl = dto.image_url,
-                    publishedDate = dto.published_at,
+                    publishedDate = formatiraniDatum,
                     source = dto.source,
                     category = dto.categories.firstOrNull() ?: "general",
                     isFeatured = true,
@@ -133,19 +185,22 @@ class NewsDAO(
                 )
             } ?: emptyList()
 
-            similarStoriesCache[uuid] = similarStories
-            // Dodaj u glavni cache nove related
-            similarStories.forEach { item ->
-                if (allStoriesCache.none { it.uuid == item.uuid }) {
-                    allStoriesCache.add(item)
-                }
+            povezanevijesti_cache[uuid] = slicnevijesti
+
+
+            val slicnenove = slicnevijesti.filter { item ->
+                svevijesti_cache.none { it.uuid == item.uuid }
             }
-            return@withContext similarStories.take(2)
+            slicnenove
+                .asReversed()
+                .forEach { item -> svevijesti_cache.add(0, item) }
+
+            return@withContext slicnevijesti.take(2)
         } catch (e: Exception) {
-            val story = allStoriesCache.find { it.uuid == uuid }
-            if (story != null) {
-                val category = story.category
-                return@withContext allStoriesCache.filter {
+            val vijest = svevijesti_cache.find { it.uuid == uuid }
+            if (vijest != null) {
+                val category = vijest.category
+                return@withContext svevijesti_cache.filter {
                     it.uuid != uuid && it.category == category
                 }.take(2)
             }
@@ -153,11 +208,10 @@ class NewsDAO(
         }
     }
 
-
     private fun isValidUUID(uuidString: String): Boolean {
-        val pattern = Pattern.compile(
+        val uuidformat = Pattern.compile(
             "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
         )
-        return pattern.matcher(uuidString).matches()
+        return uuidformat.matcher(uuidString).matches()
     }
 }

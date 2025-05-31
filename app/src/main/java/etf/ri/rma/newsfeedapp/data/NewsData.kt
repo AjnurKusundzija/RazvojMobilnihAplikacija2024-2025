@@ -21,7 +21,7 @@ object NewsData {
             snippet = "is a senior reporter who’s been covering and reviewing the latest gadgets and tech since 2006, but has loved all things electronic since he was a kid.\n\nAfter ...",
             imageUrl = "https://platform.theverge.com/wp-content/uploads/sites/2/2025/04/nikon2.jpg?quality=90&strip=all&crop=0%2C10.740836125969%2C100%2C78.518327748063&w=1200",
             category = "tech",
-            isFeatured = true,
+            isFeatured = false,
             source = "theverge.com",
             publishedDate = "26-05-2025",
             imageTags = arrayListOf()
@@ -43,7 +43,7 @@ object NewsData {
             snippet = "Global investors are worried about Washington’s recent trade policy moves, the European Central Bank chief has said\n\nThe euro could become a strong alternativ...",
             imageUrl = "https://mf.b37mrtl.ru/files/2025.05/article/68348d6c85f5403fda1e867c.jpg",
             category = "general",
-            isFeatured = true,
+            isFeatured = false,
             source = "rt.com",
             publishedDate = "26-05-2025",
             imageTags = arrayListOf()
@@ -65,7 +65,7 @@ object NewsData {
             snippet = "A man has been detained after a car drove into the crowd at Liverpool's title celebrations. Photo by Getty Images\n\nA man has been detained after a car collided ...",
             imageUrl = "https://a3.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0526%2Fr1498658_1296x729_16%2D9.jpg",
             category = "sports",
-            isFeatured = true,
+            isFeatured = false,
             source = "espn.com",
             publishedDate = "26-05-2025",
             imageTags = arrayListOf()
@@ -87,7 +87,7 @@ object NewsData {
             snippet = "Open Extended Reactions\n\nLotte Wubben-Moy has been called up to replace Millie Bright in the England squad for the upcoming Nations League games against Portuga...",
             imageUrl = "https://a4.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0526%2Fr1498519_1296x729_16%2D9.jpg",
             category = "sports",
-            isFeatured = true,
+            isFeatured = false,
             source = "espn.co.uk",
             publishedDate = "26-05-2025",
             imageTags = arrayListOf()
@@ -109,7 +109,7 @@ object NewsData {
             snippet = "Sign in to Sportsnet\n\nSign In Sign Up\n\nFirst Name {* traditionalRegistration_firstName *} {* traditionalRegistration_firstName *} Last Name {* traditionalRegist...",
             imageUrl = "https://www.sportsnet.ca/sn_favicon.ico",
             category = "sports",
-            isFeatured = true,
+            isFeatured = false,
             source = "sportsnet.ca",
             publishedDate = "26-05-2025",
             imageTags = arrayListOf()

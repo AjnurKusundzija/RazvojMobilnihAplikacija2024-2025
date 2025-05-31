@@ -22,7 +22,7 @@ object CategoryMapper {
 
             "Putovanja" -> "travel"
 
-            "None", "O", "Sve", "All", "general" -> "general"
+            "Sve", "All", "general" -> "general"
             else -> category.lowercase()
         }
     }

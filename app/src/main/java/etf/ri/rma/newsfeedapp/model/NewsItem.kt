@@ -1,8 +1,6 @@
 package etf.ri.rma.newsfeedapp.model
 
 
-
-
 data class NewsItem(
     val uuid: String,
     val title: String,
@@ -12,7 +10,7 @@ data class NewsItem(
     val source: String?,
     var category: String = "",
     var isFeatured: Boolean = false,
-    var imageTags: ArrayList<String> = arrayListOf() // NIJE nullable!
+    var imageTags: ArrayList<String> = arrayListOf()
 )
 
 

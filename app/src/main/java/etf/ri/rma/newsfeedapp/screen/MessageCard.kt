@@ -1,4 +1,6 @@
+import android.inputmethodservice.Keyboard.Row
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -13,11 +15,11 @@ import androidx.compose.ui.unit.dp
 fun MessageCard(
     category: String,
 ) {
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(50.dp),
-        contentAlignment = Alignment.Center
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             modifier = Modifier.padding(10.dp),

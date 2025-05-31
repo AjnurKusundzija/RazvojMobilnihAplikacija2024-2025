@@ -8,7 +8,7 @@ import etf.ri.rma.newsfeedapp.dto.TagsResponse
 interface ImagaApiService {
     @GET("v2/tags")
     @Headers(
-        "Authorization: Basic YWNjXzM0YWM1Njc4MDk5ZjM3Nzo3YTU1MWY4OWUxNDMwMTlmZjdmYjQ2NjEwNzA1N2U1MA=="
+        "Authorization: Basic YWNjXzM2Y2UzZGNkNjcxMzlkMzo4OWUzMDg4MTJiOTg2MGNiM2E0ZTA0NDQ5ZDEwZWQwNA=="
     )
     suspend fun getTags(
         @Query("image_url") imageUrl: String

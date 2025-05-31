@@ -1,7 +1,4 @@
 package etf.ri.rma.newsfeedapp.dto
-
-
-
 data class NewsResponse(
     val meta: MetaData?,
     val data: List<NewsItemDto>?
@@ -25,8 +22,31 @@ data class NewsItemDto(
     val published_at: String,
     val source: String,
     val categories: List<String>,
-    val relevance_score: Double?, // može biti null!
+    val relevance_score: Double?,
     val locale: String
+)
+
+data class TagsResponse(
+    val result: TagsResult?,
+    val status: TagsStatus?
+)
+
+data class TagsResult(
+    val tags: List<TagItem>?
+)
+
+data class TagItem(
+    val confidence: Double?,
+    val tag: TagName?
+)
+
+data class TagName(
+    val en: String?
+)
+
+data class TagsStatus(
+    val text: String?,
+    val type: String?
 )
 
 
