@@ -73,7 +73,7 @@ fun FilterScreen(
     }
 
     val chipovi = listOf(
-        ChipData("Više filtera ...", "filter_chip_more", "Više filtera ..."),
+
         ChipData("Sve",            "filter_chip_all", "Sve"),
         ChipData("Politika",       "filter_chip_pol", "Politika"),
         ChipData("Sport",          "filter_chip_spo", "Sport"),

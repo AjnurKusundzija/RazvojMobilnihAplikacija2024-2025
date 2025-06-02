@@ -18,7 +18,7 @@ object RetrofitInstance {
 
     private val retrofit2 by lazy {
         Retrofit.Builder()
-            .baseUrl("https://api.imagga.com//")
+            .baseUrl("https://api.imagga.com/")
 
             .addConverterFactory(GsonConverterFactory.create())
             .build()

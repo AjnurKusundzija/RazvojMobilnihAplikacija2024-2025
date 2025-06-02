@@ -1,4 +1,3 @@
-
 package etf.ri.rma.newsfeedapp.screen
 
 import MessageCard
@@ -32,34 +31,48 @@ fun NewsFeedScreen(
     nepozeljneRijeci: List<String>,
     onKategorijeUpdate: (Set<String>) -> Unit
 ) {
-
     val scope = rememberCoroutineScope()
 
-    var listavijesti by remember { mutableStateOf<List<NewsItem>>(emptyList()) }
-    var aktivnaKategorija by remember { mutableStateOf("Sve") }
+
+    var listaVijesti by remember { mutableStateOf<List<NewsItem>>(emptyList()) }
 
 
     val sdf = remember { SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()) }
 
 
-    DisposableEffect(aktivnaKategorija) {
+    DisposableEffect(kategorije) {
         scope.launch {
-            listavijesti = if (aktivnaKategorija == "Sve")
-                newsDAO.getAllStories()
-            else
-                newsDAO.getTopStoriesByCategory(aktivnaKategorija)
+            listaVijesti = when {
+
+                kategorije.contains("Sve") -> {
+                    newsDAO.getAllStories()
+                }
+
+                kategorije.size == 1 -> {
+                    val jedinaKat = kategorije.first()
+                    newsDAO.getTopStoriesByCategory(jedinaKat)
+                }
+
+                kategorije.size > 1 -> {
+
+                    val prvaKat = kategorije.first()
+                    newsDAO.getTopStoriesByCategory(prvaKat)
+                }
+                else -> {
+
+                    newsDAO.getAllStories()
+                }
+            }
         }
-        onDispose { }
+        onDispose { /* nema potrebe za ništa */ }
     }
 
 
-    val filtriraneVijesti = remember(listavijesti, dateRange, nepozeljneRijeci) {
-        listavijesti.filter { news ->
-
+    val filtriraneVijesti = remember(listaVijesti, dateRange, nepozeljneRijeci) {
+        listaVijesti.filter { news ->
             val passDate = dateRange?.let { (startMillis, endMillis) ->
                 val pubDateStr = news.publishedDate
                 if (pubDateStr.isNullOrBlank()) {
-
                     false
                 } else {
                     try {
@@ -74,7 +87,6 @@ fun NewsFeedScreen(
 
             if (!passDate) return@filter false
 
-
             val textToCheck = buildString {
                 append(news.title)
                 news.snippet?.let { append(" $it") }
@@ -86,10 +98,10 @@ fun NewsFeedScreen(
             }
             if (containsUnwanted) return@filter false
 
-
             true
         }
     }
+
 
     val chipovi = listOf(
         ChipData("Više filtera ...", "filter_chip_more", "Više filtera ..."),
@@ -122,15 +134,17 @@ fun NewsFeedScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items(chipovi) { chip ->
+
                     val selected = kategorije.contains(chip.kategorija)
+
                     FilterChip(
                         selected = selected,
                         onClick = {
                             if (chip.tag == "filter_chip_more") {
+
                                 navController.navigate("filters")
                             } else {
 
-                                aktivnaKategorija = chip.kategorija
                                 onKategorijeUpdate(setOf(chip.kategorija))
                             }
                         },
@@ -148,9 +162,7 @@ fun NewsFeedScreen(
                                     tint = if (isSystemInDarkTheme()) Color.White else Color.Black
                                 )
                         },
-                        colors = FilterChipDefaults.filterChipColors(containerColor =
-                            if (isSystemInDarkTheme()) Color(0xFF312D2D) else Color(0xFF4C60B6)
-                        ),
+                        colors = FilterChipDefaults.filterChipColors(containerColor = bojachipa),
                         modifier = Modifier.testTag(chip.tag)
                     )
                 }
@@ -162,7 +174,6 @@ fun NewsFeedScreen(
 
                 NewsList(filtriraneVijesti, navController)
             } else {
-
                 MessageCard("Nema vijesti za prikazane filtere.")
             }
         }

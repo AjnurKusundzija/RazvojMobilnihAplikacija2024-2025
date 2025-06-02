@@ -15,41 +15,51 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 import kotlinx.coroutines.delay
+
 class NewsDAO(
     var newsAPI: NewsApiService = RetrofitInstance.newsApi
 ) {
+
     companion object {
         private const val TAG = "NewsDAO"
-        private const val API_KEY = "j0FJB3CLSD52hVciqiUmbsZIqcsnL0larS9SUMhN"
+        private const val API_KEY = "SV7uMJonNFELvX7IFgrK0BYwyPzW83lssDwJFgpb"
         private const val LANGUAGE = "en"
         private const val CACHE_DURATION_MS = 30_000L
     }
-
-    private val svevijesti_cache = mutableListOf<NewsItem>()
-    private val categoryTimestamps = mutableMapOf<String, Long>()
-    private val kategorije_cache = mutableMapOf<String, List<NewsItem>>()
-    private val povezanevijesti_cache = mutableMapOf<String, List<NewsItem>>()
-    private val pocetnevijesti = NewsData.newsItems
-    private var JesuUcitanePocetne = false
-
-    fun setApiService(service: NewsApiService) {
+   fun setApiService(service: NewsApiService) {
         newsAPI = service
     }
+
+    private val svevijesti_cache = mutableListOf<NewsItem>()
+
+
+    private val categoryTimestamps = mutableMapOf<String, Long>()
+
+
+    private val kategorije_cache = mutableMapOf<String, List<NewsItem>>()
+
+
+    private val povezanevijesti_cache = mutableMapOf<String, List<NewsItem>>()
+
+
+    private val pocetnevijesti = NewsData.newsItems
+    private var JesuUcitanePocetne = false
 
 
     private fun UcitanePocetne() {
         if (!JesuUcitanePocetne) {
             svevijesti_cache.clear()
+
             svevijesti_cache.addAll(pocetnevijesti)
             JesuUcitanePocetne = true
         }
     }
 
+
     fun getAllStories(): List<NewsItem> {
         UcitanePocetne()
-        return svevijesti_cache
+        return svevijesti_cache.toList()
     }
-
 
     private fun formatirajDatum_ISO_u_ddMMyyyy(isoString: String?): String? {
         if (isoString.isNullOrBlank()) return null
@@ -65,6 +75,7 @@ class NewsDAO(
 
     suspend fun getTopStoriesByCategory(category: String): List<NewsItem> = withContext(Dispatchers.IO) {
         UcitanePocetne()
+
         val now = System.currentTimeMillis()
         val apikategorija = CategoryMapper.toApiCategory(category)
         val lastFetchTime = categoryTimestamps[apikategorija] ?: 0L
@@ -72,19 +83,25 @@ class NewsDAO(
 
 
         if (isCacheValid && kategorije_cache.containsKey(apikategorija)) {
-
             val cachedStories = kategorije_cache[apikategorija]!!.map { it.copy() }
 
+
             svevijesti_cache.forEach { it.isFeatured = false }
+
+
             val brandNewFromCache = cachedStories.filter { story ->
                 svevijesti_cache.none { it.uuid == story.uuid }
             }
-            brandNewFromCache
-                .asReversed()
-                .forEach { story -> svevijesti_cache.add(0, story) }
+            brandNewFromCache.asReversed().forEach { story ->
+                svevijesti_cache.add(0, story)
+            }
+
+
             val olderSameCategory = svevijesti_cache.filter { item ->
                 item.category == apikategorija && cachedStories.none { c -> c.uuid == item.uuid }
             }
+
+
             return@withContext cachedStories + olderSameCategory
         }
 
@@ -99,7 +116,7 @@ class NewsDAO(
                 language = LANGUAGE,
                 apiKey = API_KEY
             )
-            Log.d(TAG, "Dohvaceno. Response: $response")
+            Log.d(TAG, "Response: $response")
 
 
             val dohvaceneapivijesti: List<NewsItem> = response.data?.map { dto ->
@@ -111,7 +128,8 @@ class NewsDAO(
                     imageUrl = dto.image_url,
                     publishedDate = formatiraniDatum,
                     source = dto.source,
-                    category = dto.categories.firstOrNull() ?: apikategorija,
+
+                    category = apikategorija,
                     isFeatured = true,
                     imageTags = arrayListOf()
                 )
@@ -125,18 +143,20 @@ class NewsDAO(
             val najnovije = dohvaceneapivijesti.filter { story ->
                 svevijesti_cache.none { it.uuid == story.uuid }
             }
-            najnovije
-                .asReversed()
-                .forEach { story -> svevijesti_cache.add(0, story) }
+            najnovije.asReversed().forEach { story ->
+                svevijesti_cache.add(0, story)
+            }
 
 
             val istakategorija = svevijesti_cache.filter { item ->
                 item.category == apikategorija && dohvaceneapivijesti.none { fs -> fs.uuid == item.uuid }
             }
 
+
             return@withContext dohvaceneapivijesti + istakategorija
         } catch (e: Exception) {
             Log.e(TAG, "API greska za kategoriju =$apikategorija: ${e.message}")
+
 
             if (kategorije_cache.containsKey(apikategorija)) {
                 val novododanevijesti = kategorije_cache[apikategorija]!!.map { it.copy() }
@@ -144,14 +164,15 @@ class NewsDAO(
                 val brandNewFallback = novododanevijesti.filter { story ->
                     svevijesti_cache.none { it.uuid == story.uuid }
                 }
-                brandNewFallback
-                    .asReversed()
-                    .forEach { story -> svevijesti_cache.add(0, story) }
+                brandNewFallback.asReversed().forEach { item ->
+                    svevijesti_cache.add(0, item)
+                }
                 val olderSameCategory = svevijesti_cache.filter { item ->
                     item.category == apikategorija && novododanevijesti.none { fs -> fs.uuid == item.uuid }
                 }
                 return@withContext novododanevijesti + olderSameCategory
             }
+
 
             val lokalne = svevijesti_cache.filter { it.category == apikategorija || it.category == category }
             return@withContext lokalne
@@ -163,8 +184,10 @@ class NewsDAO(
             throw InvalidUUIDException("Neispravan uuid: $uuid")
         }
         povezanevijesti_cache[uuid]?.let { return@withContext it }
+
         try {
-            svevijesti_cache.forEach { it.isFeatured = false }
+
+
 
             val response = newsAPI.getSimilarStories(
                 uuid = uuid,
@@ -179,6 +202,7 @@ class NewsDAO(
                     imageUrl = dto.image_url,
                     publishedDate = formatiraniDatum,
                     source = dto.source,
+
                     category = dto.categories.firstOrNull() ?: "general",
                     isFeatured = true,
                     imageTags = arrayListOf()
@@ -191,9 +215,9 @@ class NewsDAO(
             val slicnenove = slicnevijesti.filter { item ->
                 svevijesti_cache.none { it.uuid == item.uuid }
             }
-            slicnenove
-                .asReversed()
-                .forEach { item -> svevijesti_cache.add(0, item) }
+            slicnenove.asReversed().forEach { item ->
+                svevijesti_cache.add(0, item)
+            }
 
             return@withContext slicnevijesti.take(2)
         } catch (e: Exception) {

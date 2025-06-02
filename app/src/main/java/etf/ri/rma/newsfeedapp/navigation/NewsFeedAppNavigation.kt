@@ -1,4 +1,4 @@
-// NewsFeedAppNavigation.kt
+
 package etf.ri.rma.newsfeedapp.navigation
 
 import androidx.compose.runtime.Composable
@@ -22,12 +22,12 @@ fun NewsFeedAppNavigation() {
     val navController = rememberNavController()
 
 
-    val newsDAO = remember { NewsDAO() }
-    val imagaDAO = remember { ImagaDAO() }
-
     var kategorije by remember { mutableStateOf(setOf("Sve")) }
     var dateRange by remember { mutableStateOf<Pair<Long, Long>?>(null) }
     var nepozeljneRijeci by remember { mutableStateOf(listOf<String>()) }
+
+    val newsDAO = remember { NewsDAO() }
+    val imagaDAO = remember { ImagaDAO() }
 
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
@@ -37,7 +37,10 @@ fun NewsFeedAppNavigation() {
                 kategorije = kategorije,
                 dateRange = dateRange,
                 nepozeljneRijeci = nepozeljneRijeci,
-                onKategorijeUpdate = { kategorije = it }
+                onKategorijeUpdate = { newKat ->
+
+                    kategorije = newKat
+                }
             )
         }
         composable("filters") {
@@ -63,9 +66,9 @@ fun NewsFeedAppNavigation() {
                 navController = navController,
                 newsDAO = newsDAO,
                 imagaDAO = imagaDAO,
-                onBack = { navController.popBackStack() },
-
+                onBack = { navController.popBackStack() }
             )
         }
     }
 }
+

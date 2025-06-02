@@ -17,7 +17,7 @@ class ImagaDAO {
 
 
     fun setApiService(service: ImagaApiService) {
-       this.apiService = service
+       apiService = service
     }
 
     private val format_regex = Regex("^https?://.*\\.(jpg|jpeg|png|bmp|gif)(\\?.*)?\$", RegexOption.IGNORE_CASE)

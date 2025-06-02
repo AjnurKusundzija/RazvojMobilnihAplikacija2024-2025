@@ -65,7 +65,6 @@ class TestS3 {
         )
         newsDAO.getTopStoriesByCategory("politics")
         val request = server.takeRequest(10, TimeUnit.SECONDS)
-        println("MOCK REQUEST LINE: ${request?.requestLine}")
         assertTrue(request != null)
         assertTrue(
             request.requestLine.contains("GET", ignoreCase = true),

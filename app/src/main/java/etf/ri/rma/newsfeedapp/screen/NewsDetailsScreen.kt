@@ -1,6 +1,6 @@
 package etf.ri.rma.newsfeedapp.screen
 
-import android.util.Log
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -55,11 +57,11 @@ fun NewsDetailsScreen(
         return
     }
 
-    var imageTags by remember { mutableStateOf<List<String>>(emptyList()) }
+    var tagovi by remember { mutableStateOf<List<String>>(emptyList()) }
     var isLoadingTags by remember { mutableStateOf(true) }
     var tagsError by remember { mutableStateOf(false) }
 
-    var relatedNews by remember { mutableStateOf<List<NewsItem>>(emptyList()) }
+    var povezanevijesti by remember { mutableStateOf<List<NewsItem>>(emptyList()) }
     var isLoadingSimilar by remember { mutableStateOf(true) }
 
 
@@ -69,19 +71,19 @@ fun NewsDetailsScreen(
         tagsError = false
         val url = vijest.imageUrl.orEmpty()
         try {
-            imageTags = if (url.isNotBlank()) imagaDAO.getTags(url) else emptyList()
+            tagovi = if (url.isNotBlank()) imagaDAO.getTags(url) else emptyList()
         } catch (e: Exception) {
             tagsError = true
-            imageTags = emptyList()
+            tagovi = emptyList()
         }
         isLoadingTags = false
 
 
         isLoadingSimilar = true
         try {
-            relatedNews = newsDAO.getSimilarStories(newsId, vijest.category)
+            povezanevijesti = newsDAO.getSimilarStories(newsId, vijest.category)
         } catch (e: Exception) {
-            relatedNews = emptyList()
+            povezanevijesti = emptyList()
         }
         isLoadingSimilar = false
     }
@@ -139,7 +141,8 @@ fun NewsDetailsScreen(
                     contentDescription = "News Image",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(200.dp)
+                    .clip(RoundedCornerShape(12.dp)),
                     contentScale = androidx.compose.ui.layout.ContentScale.Crop
                 )
             }
@@ -165,7 +168,7 @@ fun NewsDetailsScreen(
             } else when {
                 isLoadingTags -> {
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                        StyledCircularIndicator()
                     }
                 }
                 tagsError -> {
@@ -177,12 +180,12 @@ fun NewsDetailsScreen(
                             .wrapContentWidth(Alignment.CenterHorizontally)
                     )
                 }
-                imageTags.isNotEmpty() -> {
+                tagovi.isNotEmpty() -> {
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        items(imageTags.take(8)) { tag ->
+                        items(tagovi.take(8)) { tag ->
                             AssistChip(onClick = {}, label = { Text(tag) })
                         }
                     }
@@ -220,9 +223,9 @@ fun NewsDetailsScreen(
                         CircularProgressIndicator()
                     }
                 }
-                relatedNews.isNotEmpty() -> {
+                povezanevijesti.isNotEmpty() -> {
                     Column {
-                        relatedNews.forEach { related ->
+                        povezanevijesti.forEach { related ->
                             Text(
                                 text = related.title,
                                 modifier = Modifier
@@ -254,3 +257,14 @@ fun NewsDetailsScreen(
         }
     }
 }
+@Composable
+fun StyledCircularIndicator() {
+
+    CircularProgressIndicator(
+        modifier = Modifier
+            .size(48.dp),
+        strokeWidth = 4.dp,
+        color = MaterialTheme.colorScheme.primary
+    )
+}
+
