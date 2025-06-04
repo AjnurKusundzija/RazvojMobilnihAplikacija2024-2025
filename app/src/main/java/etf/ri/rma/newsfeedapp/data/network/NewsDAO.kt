@@ -14,7 +14,6 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
-import kotlinx.coroutines.delay
 
 class NewsDAO(
     var newsAPI: NewsApiService = RetrofitInstance.newsApi
@@ -161,10 +160,10 @@ class NewsDAO(
             if (kategorije_cache.containsKey(apikategorija)) {
                 val novododanevijesti = kategorije_cache[apikategorija]!!.map { it.copy() }
                 svevijesti_cache.forEach { it.isFeatured = false }
-                val brandNewFallback = novododanevijesti.filter { story ->
+                val novododanekes = novododanevijesti.filter { story ->
                     svevijesti_cache.none { it.uuid == story.uuid }
                 }
-                brandNewFallback.asReversed().forEach { item ->
+                novododanekes.asReversed().forEach { item ->
                     svevijesti_cache.add(0, item)
                 }
                 val olderSameCategory = svevijesti_cache.filter { item ->
