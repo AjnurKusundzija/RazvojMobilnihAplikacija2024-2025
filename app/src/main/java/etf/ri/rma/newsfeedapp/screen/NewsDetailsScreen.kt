@@ -22,25 +22,54 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import etf.ri.rma.newsfeedapp.R
-import etf.ri.rma.newsfeedapp.data.network.ImagaDAO
-import etf.ri.rma.newsfeedapp.data.network.NewsDAO
+import etf.ri.rma.newsfeedapp.data.network.NewsRepository
+
 import etf.ri.rma.newsfeedapp.model.NewsItem
 
 @Composable
 fun NewsDetailsScreen(
     newsId: String,
     navController: NavController,
-    newsDAO: NewsDAO,
-    imagaDAO: ImagaDAO,
+    repository: NewsRepository,
     onBack: () -> Unit
 ) {
     val background = if (isSystemInDarkTheme()) Color(0xFF3E3838) else Color(0xFF798DDC)
     val titleBg = if (isSystemInDarkTheme()) Color(0xFF797272) else Color(0xFF9191B6)
 
+    // State holders
+    var vijest by remember { mutableStateOf<NewsItem?>(null) }
+    var tagovi by remember { mutableStateOf<List<String>>(emptyList()) }
+    var isLoadingTags by remember { mutableStateOf(false) }
+    var tagsError by remember { mutableStateOf(false) }
+    var povezanevijesti by remember { mutableStateOf<List<NewsItem>>(emptyList()) }
+    var isLoadingSimilar by remember { mutableStateOf(false) }
 
-    val all by remember { mutableStateOf(newsDAO.getAllStories()) }
-    val vijest = all.find { it.uuid == newsId }
+    // Load data once on enter
+    LaunchedEffect(newsId) {
+        // 1) load news from DB
+        val allSaved = repository.getAllSavedNews()
+        vijest = allSaved.find { it.uuid == newsId }
+        if (vijest == null) return@LaunchedEffect
 
+        // 2) load tags
+        isLoadingTags = true
+        tagsError = false
+        vijest?.imageUrl
+            ?.takeIf { it.isNotBlank() }
+            ?.let { url ->
+                try { tagovi = repository.getTagsForNews(vijest!!) }
+                catch (e: Exception) { tagsError = true; tagovi = emptyList() }
+            } ?: run { tagovi = emptyList() }
+        isLoadingTags = false
+
+        // 3) load similar
+        isLoadingSimilar = true
+        try { if (vijest != null) povezanevijesti = repository.getSimilarNews(vijest!!) }
+        catch (e: Exception) { povezanevijesti = emptyList() }
+        isLoadingSimilar = false
+    }
+
+    // If not found, show error
     if (vijest == null) {
         Column(
             modifier = Modifier
@@ -50,48 +79,15 @@ fun NewsDetailsScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text("Vijest nije pronađena.", color = Color.Red)
-            Button(onClick = { onBack() }, modifier = Modifier.padding(top = 8.dp)) {
+            Button(onClick = onBack, modifier = Modifier.padding(top = 8.dp)) {
                 Text("Natrag")
             }
         }
         return
     }
 
-    var tagovi by remember { mutableStateOf<List<String>>(emptyList()) }
-    var isLoadingTags by remember { mutableStateOf(true) }
-    var tagsError by remember { mutableStateOf(false) }
-
-    var povezanevijesti by remember { mutableStateOf<List<NewsItem>>(emptyList()) }
-    var isLoadingSimilar by remember { mutableStateOf(true) }
-
-
-    LaunchedEffect(newsId) {
-
-        isLoadingTags = true
-        tagsError = false
-        val url = vijest.imageUrl.orEmpty()
-        try {
-            tagovi = if (url.isNotBlank()) imagaDAO.getTags(url) else emptyList()
-        } catch (e: Exception) {
-            tagsError = true
-            tagovi = emptyList()
-        }
-        isLoadingTags = false
-
-
-        isLoadingSimilar = true
-        try {
-            povezanevijesti = newsDAO.getSimilarStories(newsId, vijest.category)
-        } catch (e: Exception) {
-            povezanevijesti = emptyList()
-        }
-        isLoadingSimilar = false
-    }
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = background
-    ) {
+    // Main UI
+    Surface(modifier = Modifier.fillMaxSize(), color = background) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -99,7 +95,6 @@ fun NewsDetailsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-
             OutlinedCard(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.outlinedCardColors(containerColor = titleBg)
@@ -112,9 +107,8 @@ fun NewsDetailsScreen(
                 )
             }
 
-
             Text(
-                text = vijest.title,
+                text = vijest!!.title,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -122,12 +116,11 @@ fun NewsDetailsScreen(
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-
             val placeholder = painterResource(R.drawable.vijesti)
-            if (vijest.imageUrl.isNullOrBlank()) {
+            if (vijest!!.imageUrl.isNullOrBlank()) {
                 Image(
                     painter = placeholder,
-                    contentDescription = "No image available",
+                    contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
@@ -135,19 +128,19 @@ fun NewsDetailsScreen(
                 )
             } else {
                 AsyncImage(
-                    model = vijest.imageUrl,
+                    model = vijest!!.imageUrl,
                     placeholder = placeholder,
                     error = placeholder,
-                    contentDescription = "News Image",
+                    contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
-                    .clip(RoundedCornerShape(12.dp)),
+                        .clip(RoundedCornerShape(12.dp)),
                     contentScale = androidx.compose.ui.layout.ContentScale.Crop
                 )
             }
 
-
+            // Tags section
             Text(
                 text = "Tagovi slike:",
                 style = MaterialTheme.typography.titleMedium,
@@ -157,101 +150,58 @@ fun NewsDetailsScreen(
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-
-            if (vijest.imageUrl.isNullOrBlank()) {
-                Text(
-                    "Nema slike → nema tagova za prikaz.",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentWidth(Alignment.CenterHorizontally)
-                )
-            } else when {
-                isLoadingTags -> {
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        StyledCircularIndicator()
-                    }
+            when {
+                vijest!!.imageUrl.isNullOrBlank() ->
+                    Text("Nema slike → nema tagova.")
+                isLoadingTags -> Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(modifier = Modifier.size(48.dp))
                 }
-                tagsError -> {
-                    Text(
-                        "Tagovi nisu dostupni.",
-                        color = Color.Red,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    )
-                }
-                tagovi.isNotEmpty() -> {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        items(tagovi.take(8)) { tag ->
-                            AssistChip(onClick = {}, label = { Text(tag) })
-                        }
-                    }
-                }
-                else -> {
-                    Text(
-                        "Nema pronađenih tagova.",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.CenterHorizontally)
-                    )
-                }
+                tagsError -> Text("Tagovi nisu dostupni.", color = Color.Red)
+                tagovi.isNotEmpty() -> LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) { items(tagovi.take(8)) { tag -> AssistChip(onClick = {}, label = { Text(tag) }) } }
+                else -> Text("Nema pronađenih tagova.")
             }
 
-
+            // Summary
             Text("Sažetak:", style = MaterialTheme.typography.titleMedium)
-            Text(vijest.snippet.orEmpty(), style = MaterialTheme.typography.bodyLarge)
-            Text("Kategorija: ${vijest.category}")
-            Text("Izvor: ${vijest.source.orEmpty()}")
-            Text("Datum: ${vijest.publishedDate.orEmpty()}")
+            Text(vijest!!.snippet.orEmpty(), style = MaterialTheme.typography.bodyLarge)
+            Text("Kategorija: ${vijest!!.category}")
+            Text("Izvor: ${vijest!!.source.orEmpty()}")
+            Text("Datum: ${vijest!!.publishedDate.orEmpty()}")
 
-
+            // Similar news
             Text(
-                text = "Povezane vijesti iz iste kategorije:",
+                text = "Povezane vijesti:",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentWidth(Alignment.CenterHorizontally)
             )
-
-
             when {
-                isLoadingSimilar -> {
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                isLoadingSimilar -> Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+                povezanevijesti.isNotEmpty() -> Column {
+                    povezanevijesti.forEach { related ->
+                        Text(
+                            text = related.title,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.navigate("details/${related.uuid}")
+                                }
+                                .padding(8.dp),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
-                povezanevijesti.isNotEmpty() -> {
-                    Column {
-                        povezanevijesti.forEach { related ->
-                            Text(
-                                text = related.title,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        navController.navigate("details/${related.uuid}") {
-                                            launchSingleTop = true
-                                        }
-                                    }
-                                    .padding(8.dp),
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                }
-                else -> {
-                    Text("Nema povezanih vijesti")
-                }
+                else -> Text("Nema povezanih vijesti")
             }
 
-
             Spacer(Modifier.height(30.dp))
-            Button(
-                onClick = { navController.popBackStack("home", false) },
-                modifier = Modifier.testTag("details_close_button")
-            ) {
+            Button(onClick = onBack, modifier = Modifier.testTag("details_close_button")) {
                 Text("Zatvori detalje")
             }
         }

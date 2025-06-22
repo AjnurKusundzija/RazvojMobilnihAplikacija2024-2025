@@ -25,9 +25,9 @@ class NewsDAO(
         private const val LANGUAGE = "en"
         private const val CACHE_DURATION_MS = 30_000L
     }
-   fun setApiService(service: NewsApiService) {
-        newsAPI = service
-    }
+    //fun setApiService(service: NewsApiService) {
+    //    newsAPI = service
+    //}
 
     private val svevijesti_cache = mutableListOf<NewsItem>()
 

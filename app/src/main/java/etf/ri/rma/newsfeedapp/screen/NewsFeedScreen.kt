@@ -16,7 +16,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import etf.ri.rma.newsfeedapp.data.ChipData
-import etf.ri.rma.newsfeedapp.data.network.NewsDAO
+import etf.ri.rma.newsfeedapp.data.network.NewsRepository
+
 import etf.ri.rma.newsfeedapp.model.NewsItem
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -25,65 +26,45 @@ import java.util.*
 @Composable
 fun NewsFeedScreen(
     navController: NavHostController,
-    newsDAO: NewsDAO,
+    repository: NewsRepository,
     kategorije: Set<String>,
     dateRange: Pair<Long, Long>?,
     nepozeljneRijeci: List<String>,
     onKategorijeUpdate: (Set<String>) -> Unit
 ) {
     val scope = rememberCoroutineScope()
-
-
     var listaVijesti by remember { mutableStateOf<List<NewsItem>>(emptyList()) }
-
-
     val sdf = remember { SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()) }
-
 
     DisposableEffect(kategorije) {
         scope.launch {
             listaVijesti = when {
-
                 kategorije.contains("Sve") -> {
-                    newsDAO.getAllStories()
+                    repository.getAllSavedNews()
                 }
-
-                kategorije.size == 1 -> {
-                    val jedinaKat = kategorije.first()
-                    newsDAO.getTopStoriesByCategory(jedinaKat)
-                }
-
-                kategorije.size > 1 -> {
-
-                    val prvaKat = kategorije.first()
-                    newsDAO.getTopStoriesByCategory(prvaKat)
+                kategorije.size >= 1 -> {
+                    val kat = kategorije.first()
+                    repository.getTopStories(kat)
                 }
                 else -> {
-
-                    newsDAO.getAllStories()
+                    repository.getAllSavedNews()
                 }
             }
         }
-        onDispose { /* nema potrebe za ništa */ }
+        onDispose { }
     }
-
 
     val filtriraneVijesti = remember(listaVijesti, dateRange, nepozeljneRijeci) {
         listaVijesti.filter { news ->
-            val passDate = dateRange?.let { (startMillis, endMillis) ->
-                val pubDateStr = news.publishedDate
-                if (pubDateStr.isNullOrBlank()) {
-                    false
-                } else {
-                    try {
-                        val parsedDate: Date = sdf.parse(pubDateStr)!!
-                        val time = parsedDate.time
-                        time in startMillis..endMillis
-                    } catch (_: Exception) {
-                        false
-                    }
-                }
-            } != false
+            val passDate = dateRange?.let { (start, end) ->
+                news.publishedDate?.let { pd ->
+                    runCatching {
+                        sdf.parse(pd)!!.time
+                    }.getOrNull()?.let { time ->
+                        time in start..end
+                    } ?: false
+                } ?: false
+            } ?: true
 
             if (!passDate) return@filter false
 
@@ -92,16 +73,12 @@ fun NewsFeedScreen(
                 news.snippet?.let { append(" $it") }
             }.lowercase(Locale.getDefault())
 
-            val containsUnwanted = nepozeljneRijeci.any { word ->
-                val lw = word.lowercase(Locale.getDefault())
-                textToCheck.contains(lw)
+            if (nepozeljneRijeci.any { word -> textToCheck.contains(word.lowercase(Locale.getDefault())) }) {
+                return@filter false
             }
-            if (containsUnwanted) return@filter false
-
             true
         }
     }
-
 
     val chipovi = listOf(
         ChipData("Više filtera ...", "filter_chip_more", "Više filtera ..."),
@@ -134,17 +111,13 @@ fun NewsFeedScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items(chipovi) { chip ->
-
                     val selected = kategorije.contains(chip.kategorija)
-
                     FilterChip(
                         selected = selected,
                         onClick = {
                             if (chip.tag == "filter_chip_more") {
-
                                 navController.navigate("filters")
                             } else {
-
                                 onKategorijeUpdate(setOf(chip.kategorija))
                             }
                         },
@@ -171,7 +144,6 @@ fun NewsFeedScreen(
             Spacer(Modifier.height(12.dp))
 
             if (filtriraneVijesti.isNotEmpty()) {
-
                 NewsList(filtriraneVijesti, navController)
             } else {
                 MessageCard("Nema vijesti za prikazane filtere.")

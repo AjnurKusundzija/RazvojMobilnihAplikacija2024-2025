@@ -6,10 +6,12 @@ import androidx.room.Room
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+
 import etf.ri.rma.newsfeedapp.data.SavedNewsDAO
 import etf.ri.rma.newsfeedapp.data.NewsDatabase
+import etf.ri.rma.newsfeedapp.model.NewsItem
 //svi entiteti neka se nalaze sa istim imenom kao tabela u paketu model
-import etf.ri.rma.newsfeedapp.model.News
+
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.equalTo
@@ -27,6 +29,7 @@ import org.junit.runners.MethodSorters
 import java.util.UUID
 import kotlin.test.assertContains
 
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4::class)
 class TestS4 {
@@ -38,14 +41,15 @@ class TestS4 {
     private val describeTags = "pragma table_info('Tags')"
     private val describeNewsTags = "pragma table_info('NewsTags')"
     //data
-    var news1 = News(uuid=UUID.randomUUID().toString(), title = "Naslova T0", snippet = "snpt", category = "politics", imageUrl = "", isFeatured = true, publishedDate = "01-01-2025", source = "izvor")
-    var news2 = News(uuid=UUID.randomUUID().toString(), title = "Naslova 2", snippet = "snpt 2", category = "sport", imageUrl = "", isFeatured = false, publishedDate = "01-02-2025", source = "izvor 2")
+
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
 
     companion object {
+        var news1 = NewsItem(uuid=UUID.randomUUID().toString(), title = "Naslova T0", snippet = "snpt", category = "politics", imageUrl = "", isFeatured = true, publishedDate = "01-01-2025", source = "izvor")
+        var news2 = NewsItem(uuid=UUID.randomUUID().toString(), title = "Naslova 2", snippet = "snpt 2", category = "sport", imageUrl = "", isFeatured = false, publishedDate = "01-02-2025", source = "izvor 2")
         lateinit var roomDb: NewsDatabase
         lateinit var savedNewsDAO: SavedNewsDAO
         lateinit var db: SupportSQLiteDatabase
@@ -58,7 +62,7 @@ class TestS4 {
                 NewsDatabase::class.java
             ).build()
             savedNewsDAO = roomDb.savedNewsDAO()
-            savedNewsDAO.getAllTags()
+            savedNewsDAO.allNews()
             db = roomDb.openHelper.readableDatabase
         }
     }
@@ -104,7 +108,7 @@ class TestS4 {
     }
 
     @Test
-    fun a01_tableBiljkaBitmapHasAllColumns() = runTest {
+    fun a01_tableTagsHasAllColumns() = runTest {
         checkColumns(describeTags, "Tags")
     }
 
@@ -177,10 +181,10 @@ class TestS4 {
 
     @Test
     fun a11_allNewsGetsTags() = runTest {
-        var allnews = savedNewsDAO.allNews().find { it.tags.find { it.value=="prva"}!=null}
+        var allnews = savedNewsDAO.allNews().find { it.imageTags.find { it.value=="prva"}!=null}
         assertThat(allnews, `is`(notNullValue()))
-        assertEquals(2,allnews!!.tags.size)
-        assertThat(allnews.tags, not(hasItems(hasText("prva"))))
+        assertEquals(2,allnews!!.imageTags.size)
+        assertThat(allnews.imageTags, not(hasItems(hasText("prva"))))
     }
 
     @Test

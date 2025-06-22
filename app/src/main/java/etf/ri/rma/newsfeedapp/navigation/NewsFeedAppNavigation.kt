@@ -1,18 +1,20 @@
-
 package etf.ri.rma.newsfeedapp.navigation
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.room.Room
+import kotlinx.coroutines.launch
+import etf.ri.rma.newsfeedapp.data.NewsDatabase
+
+import etf.ri.rma.newsfeedapp.data.NewsData
 import etf.ri.rma.newsfeedapp.data.network.ImagaDAO
 import etf.ri.rma.newsfeedapp.data.network.NewsDAO
+import etf.ri.rma.newsfeedapp.data.network.NewsRepository
 import etf.ri.rma.newsfeedapp.screen.FilterScreen
 import etf.ri.rma.newsfeedapp.screen.NewsDetailsScreen
 import etf.ri.rma.newsfeedapp.screen.NewsFeedScreen
@@ -26,31 +28,55 @@ fun NewsFeedAppNavigation() {
     var dateRange by remember { mutableStateOf<Pair<Long, Long>?>(null) }
     var nepozeljneRijeci by remember { mutableStateOf(listOf<String>()) }
 
-    val newsDAO = remember { NewsDAO() }
-    val imagaDAO = remember { ImagaDAO() }
+
+    val context = LocalContext.current
+    val db = remember {
+        Room.databaseBuilder(
+            context,
+            NewsDatabase::class.java,
+            "news_db"
+        ).build()
+    }
+    val savedNewsDao = remember { db.savedNewsDAO() }
+
+
+    val repository = remember {
+        NewsRepository(
+            context      = context,
+            newsDao      = NewsDAO(),
+            imaggaDao    = ImagaDAO(),
+            savedNewsDao = savedNewsDao
+        )
+    }
+
+
+    LaunchedEffect(Unit) {
+        launch {
+            NewsData.newsItems.forEach { item ->
+                savedNewsDao.saveNews(item)
+            }
+        }
+    }
 
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
             NewsFeedScreen(
-                navController = navController,
-                newsDAO = newsDAO,
-                kategorije = kategorije,
-                dateRange = dateRange,
-                nepozeljneRijeci = nepozeljneRijeci,
-                onKategorijeUpdate = { newKat ->
-
-                    kategorije = newKat
-                }
+                navController       = navController,
+                repository          = repository,
+                kategorije          = kategorije,
+                dateRange           = dateRange,
+                nepozeljneRijeci    = nepozeljneRijeci,
+                onKategorijeUpdate  = { newSet -> kategorije = newSet }
             )
         }
         composable("filters") {
             FilterScreen(
-                sel_kategorije = kategorije,
-                RasponDatuma = dateRange,
+                sel_kategorije   = kategorije,
+                RasponDatuma     = dateRange,
                 NepozeljneRijeci = nepozeljneRijeci,
-                onApply = { newKat, newDate, newWords ->
-                    kategorije = newKat
-                    dateRange = newDate
+                onApply          = { newSet, newRange, newWords ->
+                    kategorije       = newSet
+                    dateRange        = newRange
                     nepozeljneRijeci = newWords
                     navController.popBackStack()
                 }
@@ -62,13 +88,11 @@ fun NewsFeedAppNavigation() {
         ) { backStackEntry ->
             val id = backStackEntry.arguments!!.getString("uuid")!!
             NewsDetailsScreen(
-                newsId = id,
-                navController = navController,
-                newsDAO = newsDAO,
-                imagaDAO = imagaDAO,
-                onBack = { navController.popBackStack() }
+                newsId       = id,
+                navController= navController,
+                repository   = repository,
+                onBack       = { navController.popBackStack() }
             )
         }
     }
 }
-

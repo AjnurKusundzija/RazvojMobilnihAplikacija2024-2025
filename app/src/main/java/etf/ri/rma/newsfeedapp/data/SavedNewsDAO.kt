@@ -1,25 +1,21 @@
 package etf.ri.rma.newsfeedapp.data
 
-
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import etf.ri.rma.newsfeedapp.model.News
 import etf.ri.rma.newsfeedapp.model.NewsEntity
 import etf.ri.rma.newsfeedapp.model.NewsItem
 import etf.ri.rma.newsfeedapp.model.NewsTagCrossRef
 import etf.ri.rma.newsfeedapp.model.NewsWithTags
 import etf.ri.rma.newsfeedapp.model.TagEntity
 import etf.ri.rma.newsfeedapp.model.toEntity
-import etf.ri.rma.newsfeedapp.model.toNews
 
 
 @Dao
 interface SavedNewsDAO {
 
-    // --- POMOĆNE ---
     @Query("SELECT * FROM News WHERE uuid = :uuid LIMIT 1")
     suspend fun findNewsByUuid(uuid: String): NewsEntity?
 
@@ -59,44 +55,47 @@ interface SavedNewsDAO {
     """)
     suspend fun loadSimilarNewsWithTags(tags: List<String>): List<NewsWithTags>
 
-    // --- DOMENSKE METODE ---
-
-    /** Dodaje ako nema isti uuid */
     @Transaction
     suspend fun saveNews(news: NewsItem): Boolean {
         if (findNewsByUuid(news.uuid) != null) return false
-        return insertNewsEntity(news. toEntity()) > 0L
+        return insertNewsEntity(news.toEntity()) > 0L
     }
 
-    /** Vraća News sa popunjenim .tags */
     @Transaction
-    suspend fun allNews(): List<News> =
-        loadAllNewsWithTags().map { it.toNews() }
+    suspend fun allNews(): List<NewsItem> =
+        loadAllNewsWithTags().map { it.toNewsItem() }
 
-    /** Vijesti po kategoriji */
     @Transaction
-    suspend fun getNewsWithCategory(category: String): List<News> =
-        loadNewsWithTagsByCategory(category).map { it.toNews() }
+    suspend fun getNewsWithCategory(category: String): List<NewsItem> =
+        loadNewsWithTagsByCategory(category).map { it.toNewsItem() }
 
-    /**
-     * Dodaje tagove vijesti; vraća broj NOVO ubačenih tagova u tabelu Tags.
-     */
+
     @Transaction
     suspend fun addTags(tags: List<String>, newsId: Int): Int {
-        var count = 0
-        for (v in tags) {
-            val inserted = insertTag(TagEntity(value = v))
-            if (inserted > 0) {
-                count++
-                insertCrossRef(NewsTagCrossRef(newsId, inserted.toInt()))
+        var newlyInsertedCount = 0
+
+        for (value in tags) {
+
+            val insertedId = insertTag(TagEntity(value = value))
+
+
+            val tagId = if (insertedId != -1L) {
+                newlyInsertedCount++
+                insertedId.toInt()
             } else {
-                findTagIdByValue(v)?.let { insertCrossRef(NewsTagCrossRef(newsId, it)) }
+
+                findTagIdByValue(value)
+                    ?: throw IllegalStateException("Ne mogu naći tag `$value` nakon ubacivanja")
             }
+
+
+            insertCrossRef(NewsTagCrossRef(newsId = newsId, tagsId = tagId))
         }
-        return count
+
+        return newlyInsertedCount
     }
 
-    /** Samo stringovi tagova */
+
     @Transaction
     suspend fun getTags(newsId: Int): List<String> =
         loadAllNewsWithTags()
@@ -105,10 +104,9 @@ interface SavedNewsDAO {
             ?.map { it.value }
             ?: emptyList()
 
-    /** Slične vijesti po prva dva taga */
     @Transaction
-    suspend fun getSimilarNews(tags: List<String>): List<News> {
+    suspend fun getSimilarNews(tags: List<String>): List<NewsItem> {
         val subset = if (tags.size > 2) tags.take(2) else tags
-        return loadSimilarNewsWithTags(subset).map { it.toNews() }
+        return loadSimilarNewsWithTags(subset).map { it.toNewsItem() }
     }
 }
