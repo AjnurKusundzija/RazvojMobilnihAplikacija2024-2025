@@ -1,6 +1,11 @@
 package etf.ri.rma.newsfeedapp.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -10,11 +15,11 @@ import androidx.navigation.navArgument
 import androidx.room.Room
 import kotlinx.coroutines.launch
 import etf.ri.rma.newsfeedapp.data.NewsDatabase
-
 import etf.ri.rma.newsfeedapp.data.NewsData
+
 import etf.ri.rma.newsfeedapp.data.network.ImagaDAO
 import etf.ri.rma.newsfeedapp.data.network.NewsDAO
-import etf.ri.rma.newsfeedapp.data.network.NewsRepository
+import etf.ri.rma.newsfeedapp.repositories.NewsRepository
 import etf.ri.rma.newsfeedapp.screen.FilterScreen
 import etf.ri.rma.newsfeedapp.screen.NewsDetailsScreen
 import etf.ri.rma.newsfeedapp.screen.NewsFeedScreen
@@ -27,6 +32,9 @@ fun NewsFeedAppNavigation() {
     var kategorije by remember { mutableStateOf(setOf("Sve")) }
     var dateRange by remember { mutableStateOf<Pair<Long, Long>?>(null) }
     var nepozeljneRijeci by remember { mutableStateOf(listOf<String>()) }
+
+
+    var ubacene by remember { mutableStateOf(false) }
 
 
     val context = LocalContext.current
@@ -52,10 +60,24 @@ fun NewsFeedAppNavigation() {
 
     LaunchedEffect(Unit) {
         launch {
-            NewsData.newsItems.forEach { item ->
-                savedNewsDao.saveNews(item)
+            if (savedNewsDao.allNews().isEmpty()) {
+                NewsData.newsItems.forEach { item ->
+                    savedNewsDao.saveNews(item)
+                }
             }
+            ubacene = true
         }
+    }
+
+
+    if (!ubacene) {
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
     }
 
     NavHost(navController = navController, startDestination = "home") {

@@ -5,11 +5,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import etf.ri.rma.newsfeedapp.model.NewsEntity
+import etf.ri.rma.newsfeedapp.entites.NewsEntity
+import etf.ri.rma.newsfeedapp.entites.NewsTagCrossRef
+import etf.ri.rma.newsfeedapp.entites.NewsWithTags
+import etf.ri.rma.newsfeedapp.entites.TagEntity
 import etf.ri.rma.newsfeedapp.model.NewsItem
-import etf.ri.rma.newsfeedapp.model.NewsTagCrossRef
-import etf.ri.rma.newsfeedapp.model.NewsWithTags
-import etf.ri.rma.newsfeedapp.model.TagEntity
+
 import etf.ri.rma.newsfeedapp.model.toEntity
 
 
@@ -72,7 +73,7 @@ interface SavedNewsDAO {
 
     @Transaction
     suspend fun addTags(tags: List<String>, newsId: Int): Int {
-        var newlyInsertedCount = 0
+        var novododane = 0
 
         for (value in tags) {
 
@@ -80,7 +81,7 @@ interface SavedNewsDAO {
 
 
             val tagId = if (insertedId != -1L) {
-                newlyInsertedCount++
+                novododane++
                 insertedId.toInt()
             } else {
 
@@ -92,7 +93,7 @@ interface SavedNewsDAO {
             insertCrossRef(NewsTagCrossRef(newsId = newsId, tagsId = tagId))
         }
 
-        return newlyInsertedCount
+        return novododane
     }
 
 
@@ -106,7 +107,6 @@ interface SavedNewsDAO {
 
     @Transaction
     suspend fun getSimilarNews(tags: List<String>): List<NewsItem> {
-        val subset = if (tags.size > 2) tags.take(2) else tags
-        return loadSimilarNewsWithTags(subset).map { it.toNewsItem() }
+        return loadSimilarNewsWithTags(tags.take(2)).map { it.toNewsItem() }
     }
 }

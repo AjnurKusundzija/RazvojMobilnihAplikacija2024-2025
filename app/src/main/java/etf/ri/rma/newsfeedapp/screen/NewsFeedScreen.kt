@@ -16,9 +16,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import etf.ri.rma.newsfeedapp.data.ChipData
-import etf.ri.rma.newsfeedapp.data.network.NewsRepository
 
 import etf.ri.rma.newsfeedapp.model.NewsItem
+import etf.ri.rma.newsfeedapp.repositories.NewsRepository
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*

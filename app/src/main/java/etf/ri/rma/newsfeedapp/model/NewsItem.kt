@@ -1,5 +1,7 @@
 package etf.ri.rma.newsfeedapp.model
 
+import etf.ri.rma.newsfeedapp.entites.TagEntity
+
 
 data class NewsItem(
     val uuid: String,

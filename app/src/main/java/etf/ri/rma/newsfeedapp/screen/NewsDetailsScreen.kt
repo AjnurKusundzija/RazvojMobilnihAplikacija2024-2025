@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import etf.ri.rma.newsfeedapp.R
-import etf.ri.rma.newsfeedapp.data.network.NewsRepository
 
 import etf.ri.rma.newsfeedapp.model.NewsItem
+import etf.ri.rma.newsfeedapp.repositories.NewsRepository
 
 @Composable
 fun NewsDetailsScreen(
@@ -36,7 +36,7 @@ fun NewsDetailsScreen(
     val background = if (isSystemInDarkTheme()) Color(0xFF3E3838) else Color(0xFF798DDC)
     val titleBg = if (isSystemInDarkTheme()) Color(0xFF797272) else Color(0xFF9191B6)
 
-    // State holders
+
     var vijest by remember { mutableStateOf<NewsItem?>(null) }
     var tagovi by remember { mutableStateOf<List<String>>(emptyList()) }
     var isLoadingTags by remember { mutableStateOf(false) }
@@ -44,14 +44,14 @@ fun NewsDetailsScreen(
     var povezanevijesti by remember { mutableStateOf<List<NewsItem>>(emptyList()) }
     var isLoadingSimilar by remember { mutableStateOf(false) }
 
-    // Load data once on enter
+
     LaunchedEffect(newsId) {
-        // 1) load news from DB
+
         val allSaved = repository.getAllSavedNews()
         vijest = allSaved.find { it.uuid == newsId }
         if (vijest == null) return@LaunchedEffect
 
-        // 2) load tags
+
         isLoadingTags = true
         tagsError = false
         vijest?.imageUrl
@@ -62,14 +62,14 @@ fun NewsDetailsScreen(
             } ?: run { tagovi = emptyList() }
         isLoadingTags = false
 
-        // 3) load similar
+
         isLoadingSimilar = true
         try { if (vijest != null) povezanevijesti = repository.getSimilarNews(vijest!!) }
         catch (e: Exception) { povezanevijesti = emptyList() }
         isLoadingSimilar = false
     }
 
-    // If not found, show error
+
     if (vijest == null) {
         Column(
             modifier = Modifier
@@ -86,7 +86,7 @@ fun NewsDetailsScreen(
         return
     }
 
-    // Main UI
+
     Surface(modifier = Modifier.fillMaxSize(), color = background) {
         Column(
             modifier = Modifier
@@ -140,7 +140,7 @@ fun NewsDetailsScreen(
                 )
             }
 
-            // Tags section
+
             Text(
                 text = "Tagovi slike:",
                 style = MaterialTheme.typography.titleMedium,
@@ -164,14 +164,14 @@ fun NewsDetailsScreen(
                 else -> Text("Nema pronađenih tagova.")
             }
 
-            // Summary
+
             Text("Sažetak:", style = MaterialTheme.typography.titleMedium)
             Text(vijest!!.snippet.orEmpty(), style = MaterialTheme.typography.bodyLarge)
             Text("Kategorija: ${vijest!!.category}")
             Text("Izvor: ${vijest!!.source.orEmpty()}")
             Text("Datum: ${vijest!!.publishedDate.orEmpty()}")
 
-            // Similar news
+
             Text(
                 text = "Povezane vijesti:",
                 style = MaterialTheme.typography.titleLarge,
@@ -207,7 +207,7 @@ fun NewsDetailsScreen(
         }
     }
 }
-@Composable
+/*@Composable
 fun StyledCircularIndicator() {
 
     CircularProgressIndicator(
@@ -218,3 +218,4 @@ fun StyledCircularIndicator() {
     )
 }
 
+*/

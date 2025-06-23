@@ -1,9 +1,10 @@
-package etf.ri.rma.newsfeedapp.model
+package etf.ri.rma.newsfeedapp.entites
 
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-
+import etf.ri.rma.newsfeedapp.model.NewsItem
+import kotlin.collections.forEach
 
 data class NewsWithTags(
     @Embedded val news: NewsEntity,
@@ -35,5 +36,3 @@ data class NewsWithTags(
         )
     }
 }
-
-

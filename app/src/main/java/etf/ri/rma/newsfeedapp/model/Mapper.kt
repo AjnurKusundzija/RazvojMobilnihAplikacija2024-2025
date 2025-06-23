@@ -1,6 +1,8 @@
 
 package etf.ri.rma.newsfeedapp.model
 
+import etf.ri.rma.newsfeedapp.entites.NewsEntity
+
 fun NewsItem.toEntity(): NewsEntity = NewsEntity(
     uuid = uuid,
     title = title,

@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import etf.ri.rma.newsfeedapp.model.NewsEntity
-import etf.ri.rma.newsfeedapp.model.TagEntity
-import etf.ri.rma.newsfeedapp.model.NewsTagCrossRef
+import etf.ri.rma.newsfeedapp.entites.NewsEntity
+import etf.ri.rma.newsfeedapp.entites.NewsTagCrossRef
+import etf.ri.rma.newsfeedapp.entites.TagEntity
 
 
 @Database(
