@@ -20,8 +20,8 @@ data class NewsWithTags(
     val tags: List<TagEntity>
 ) {
     fun toNewsItem(): NewsItem {
-        val tagStrings = ArrayList<String>()
-        tags.forEach { tagStrings.add(it.value) }
+        val tagovi = ArrayList<String>()
+        tags.forEach { tagovi.add(it.value) }
 
         return NewsItem(
             uuid = news.uuid,
